@@ -6,6 +6,8 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const json = file => readFile(path.join(root, file), "utf8").then(JSON.parse);
 const manifest = await json("module.json");
+assert.equal(manifest.version, (await json("package.json")).version);
+assert((await readFile(path.join(root, "scripts/api.js"), "utf8")).includes(`version: "${manifest.version}"`));
 assert.equal(manifest.id, "dominion-sound-archive");
 assert.equal(manifest.compatibility.minimum, "13");
 assert.equal(manifest.compatibility.maximum, "13");
