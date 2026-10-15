@@ -1,0 +1,77 @@
+<section class="dsa-shell">
+  <header class="dsa-toolbar">
+    <div class="dsa-identity"><i class="fa-solid fa-headphones" aria-hidden="true"></i><div><strong>{{documentName}}</strong>
+      <small>{{groupCount}} {{localize "DSA.Groups"}} · {{clipCount}} {{localize "DSA.Clips"}}</small></div></div>
+    <div class="dsa-tools">
+      <button type="button" data-dsa-action="stop" title="{{localize 'DSA.StopAll'}}"><i class="fa-solid fa-stop"></i> {{localize "DSA.Stop"}}</button>
+      {{#if editable}}<button type="button" data-dsa-action="add-group" class="dsa-primary"><i class="fa-solid fa-plus"></i> {{localize "DSA.AddGroup"}}</button>{{/if}}
+    </div>
+  </header>
+  <label class="dsa-searchbox"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+    <input class="dsa-search" type="search" value="{{query}}" placeholder="{{localize 'DSA.Search'}}" aria-label="{{localize 'DSA.Search'}}"></label>
+  {{#unless editable}}<p class="dsa-notice"><i class="fa-solid fa-lock"></i> {{localize "DSA.ReadOnly"}}</p>{{/unless}}
+  <div class="dsa-library">
+    {{#each groups}}
+    <details class="dsa-group" data-group="{{id}}" {{#if expanded}}open{{/if}}>
+      <summary class="dsa-group-heading">
+        <span class="dsa-group-name"><i class="fa-solid fa-layer-group"></i> {{name}} <span class="dsa-count">{{count}}</span>
+          {{#if category}}<code>{{category}}</code>{{/if}}</span>
+        {{#if editable}}<span class="dsa-controls">
+          <button type="button" draggable="true" data-dsa-drag="group" aria-label="{{localize 'DSA.Drag'}}" title="{{localize 'DSA.Drag'}}"><i class="fa-solid fa-grip-vertical"></i></button>
+          <button type="button" data-dsa-action="group-up" title="{{localize 'DSA.Up'}}" aria-label="{{localize 'DSA.Up'}}"><i class="fa-solid fa-arrow-up"></i></button>
+          <button type="button" data-dsa-action="group-down" title="{{localize 'DSA.Down'}}" aria-label="{{localize 'DSA.Down'}}"><i class="fa-solid fa-arrow-down"></i></button>
+          <button type="button" data-dsa-action="edit-group" title="{{localize 'DSA.EditGroup'}}" aria-label="{{localize 'DSA.EditGroup'}}"><i class="fa-solid fa-pen"></i></button>
+          <button type="button" data-dsa-action="remove-group" title="{{localize 'DSA.RemoveGroup'}}" aria-label="{{localize 'DSA.RemoveGroup'}}"><i class="fa-solid fa-trash"></i></button>
+        </span>{{/if}}
+      </summary>
+      {{#if editable}}<div class="dsa-add-actions">
+        <button type="button" data-dsa-action="add-file"><i class="fa-solid fa-file-audio"></i> {{localize "DSA.AddFile"}}</button>
+        <button type="button" data-dsa-action="add-folder"><i class="fa-solid fa-folder-plus"></i> {{localize "DSA.AddFolder"}}</button>
+      </div>{{/if}}
+      <div class="dsa-entries">
+      {{#each entries}}
+        {{#if isFolder}}
+        <details class="dsa-entry dsa-folder" data-entry="{{id}}" data-folder="{{id}}" data-search="{{name}} {{label}} {{path}}" {{#if expanded}}open{{/if}}>
+          <summary class="dsa-folder-heading"><span class="dsa-folder-name"><i class="fa-solid fa-folder-open"></i> {{name}} <span class="dsa-count">{{count}}</span>
+            {{#if recursive}}<i class="fa-solid fa-folder-tree" title="{{localize 'DSA.Recursive'}}"></i>{{/if}}
+            <small title="{{path}}">{{source}} · {{path}}</small>{{#if label}}<small>{{label}}</small>{{/if}}</span>
+            {{#if editable}}<span class="dsa-controls">
+              <button type="button" draggable="true" data-dsa-drag="entry" title="{{localize 'DSA.Drag'}}" aria-label="{{localize 'DSA.Drag'}}"><i class="fa-solid fa-grip-vertical"></i></button>
+              <button type="button" data-dsa-action="entry-up" title="{{localize 'DSA.Up'}}" aria-label="{{localize 'DSA.Up'}}"><i class="fa-solid fa-arrow-up"></i></button>
+              <button type="button" data-dsa-action="entry-down" title="{{localize 'DSA.Down'}}" aria-label="{{localize 'DSA.Down'}}"><i class="fa-solid fa-arrow-down"></i></button>
+              <button type="button" data-dsa-action="refresh-folder" title="{{localize 'DSA.RefreshFolder'}}" aria-label="{{localize 'DSA.RefreshFolder'}}"><i class="fa-solid fa-arrows-rotate"></i></button>
+              <button type="button" data-dsa-action="edit-entry" title="{{localize 'DSA.EditEntry'}}" aria-label="{{localize 'DSA.EditEntry'}}"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" data-dsa-action="remove-entry" title="{{localize 'DSA.RemoveReference'}}" aria-label="{{localize 'DSA.RemoveReference'}}"><i class="fa-solid fa-unlink"></i></button>
+            </span>{{/if}}
+          </summary>
+          <div class="dsa-folder-clips">
+            {{#each clips}}<div class="dsa-clip" data-search="{{name}} {{path}} {{../label}}">
+              <button type="button" class="dsa-play" data-dsa-action="play" data-path="{{path}}" aria-label="{{localize 'DSA.Play'}}"><i class="fa-solid fa-play"></i></button>
+              <div class="dsa-clip-info"><strong>{{name}}</strong><small title="{{path}}">{{path}}</small></div>
+              {{#if editable}}<button type="button" class="dsa-icon" data-dsa-action="remove-clip" data-path="{{path}}" title="{{localize 'DSA.HideClip'}}" aria-label="{{localize 'DSA.HideClip'}}"><i class="fa-solid fa-unlink"></i></button>{{/if}}
+            </div>{{else}}<p class="dsa-empty-small">{{localize "DSA.EmptyFolder"}}</p>{{/each}}
+          </div>
+        </details>
+        {{else}}
+        <div class="dsa-entry" data-entry="{{id}}">
+          <div class="dsa-clip" data-search="{{name}} {{label}} {{path}}">
+            <button type="button" class="dsa-play" data-dsa-action="play" data-path="{{path}}" aria-label="{{localize 'DSA.Play'}}"><i class="fa-solid fa-play"></i></button>
+            <div class="dsa-clip-info"><strong>{{name}}</strong>{{#if label}}<span class="dsa-label">{{label}}</span>{{/if}}<small title="{{path}}">{{path}}</small></div>
+            {{#if editable}}<span class="dsa-controls">
+              <button type="button" draggable="true" data-dsa-drag="entry" title="{{localize 'DSA.Drag'}}" aria-label="{{localize 'DSA.Drag'}}"><i class="fa-solid fa-grip-vertical"></i></button>
+              <button type="button" data-dsa-action="entry-up" title="{{localize 'DSA.Up'}}" aria-label="{{localize 'DSA.Up'}}"><i class="fa-solid fa-arrow-up"></i></button>
+              <button type="button" data-dsa-action="entry-down" title="{{localize 'DSA.Down'}}" aria-label="{{localize 'DSA.Down'}}"><i class="fa-solid fa-arrow-down"></i></button>
+              <button type="button" data-dsa-action="edit-entry" title="{{localize 'DSA.EditEntry'}}" aria-label="{{localize 'DSA.EditEntry'}}"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" data-dsa-action="remove-entry" title="{{localize 'DSA.RemoveReference'}}" aria-label="{{localize 'DSA.RemoveReference'}}"><i class="fa-solid fa-unlink"></i></button>
+            </span>{{/if}}
+          </div>
+        </div>
+        {{/if}}
+      {{else}}<p class="dsa-empty-small">{{localize "DSA.EmptyGroup"}}</p>{{/each}}
+      </div>
+    </details>
+    {{else}}<div class="dsa-empty"><i class="fa-solid fa-headphones"></i><h3>{{localize "DSA.EmptyLibrary"}}</h3><p>{{localize "DSA.StartHint"}}</p></div>{{/each}}
+    <p class="dsa-no-results" hidden>{{localize "DSA.NoResults"}}</p>
+  </div>
+  <footer class="dsa-footer"><i class="fa-solid fa-circle-info"></i> {{localize "DSA.Footer"}}</footer>
+</section>
