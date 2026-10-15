@@ -2,7 +2,7 @@
   "id": "dominion-sound-archive",
   "title": "Dominion Sound Archive",
   "description": "Persistent audio libraries for Actors and Items, with Forge Assets folders and local preview.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "compatibility": {"minimum": "13", "verified": "13.351", "maximum": "13"},
   "authors": [{"name": "UmutcanOrug", "url": "https://github.com/UmutcanOrug"}],
   "esmodules": ["scripts/main.js"],
@@ -13,7 +13,7 @@
   ],
   "url": "https://github.com/UmutcanOrug/dominion-sound-archive",
   "manifest": "https://github.com/UmutcanOrug/dominion-sound-archive/releases/latest/download/module.json",
-  "download": "https://github.com/UmutcanOrug/dominion-sound-archive/releases/download/v1.0.1/dominion-sound-archive.zip",
+  "download": "https://github.com/UmutcanOrug/dominion-sound-archive/releases/download/v1.0.2/dominion-sound-archive.zip",
   "readme": "https://github.com/UmutcanOrug/dominion-sound-archive/blob/main/README.md",
   "bugs": "https://github.com/UmutcanOrug/dominion-sound-archive/issues",
   "license": "LICENSE"

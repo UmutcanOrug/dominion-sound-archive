@@ -33,9 +33,27 @@ Starting with **1.0.1**, Actors receive six default groups:
 | `wounded` | `voice.wounded` |
 | `retreat` | `voice.retreat` |
 
-After updating, reload the world as a GM. One active GM automatically adds missing groups to every world Actor and existing unlinked scene token Actor. Newly created, imported and duplicated Actors receive them during creation. Items retain their own custom groups.
+After updating, reload the world as a GM. One active GM automatically adds missing groups to every world Actor and existing unlinked scene token Actor. Newly created, imported and duplicated Actors receive them during creation. Existing Item groups are preserved alongside the new defaults below.
 
 Existing groups, IDs, labels, cached folders and sound references are preserved. A matching category key, or a matching name ignoring case/extra spaces, is reused. Matching groups without a category receive the key above; existing custom keys are preserved. Owner-opened archives also fill missing defaults. Default groups remain editable; if removed, missing defaults return the next time an owner opens the archive or a GM reloads the world. Unopened compendium packs are not scanned or unlocked; imported Actors receive defaults normally.
+
+Starting with **1.0.2**, all Items receive nine default weapon audio groups:
+
+| Group | Macro category key |
+| --- | --- |
+| `Bolt-Action` | `weapon.bolt-action` |
+| `Semi-Auto` | `weapon.semi-auto` |
+| `LMG` | `weapon.lmg` |
+| `HMG` | `weapon.hmg` |
+| `Sub-Machine` | `weapon.sub-machine` |
+| `Pistol` | `weapon.pistol` |
+| `Cannon` | `weapon.cannon` |
+| `Reload` | `weapon.reload` |
+| `Explosion` | `weapon.explosion` |
+
+Reload as a GM after updating to initialize world Items and equipment embedded in every world Actor and existing unlinked scene token Actor. Newly created/imported/duplicated Items receive defaults during creation; initial equipment supplied with a newly created/imported Actor is also initialized. Owners can fill missing defaults by opening an Item's archive. Existing matching groups, custom keys and all audio references are preserved using the same rules as Actor groups.
+
+Each category is a separate sound pool on the same Item. For example, `api.getRandomClip(equipment, {category: "weapon.bolt-action"})` and `api.getRandomClip(equipment, {category: "weapon.hmg"})` let a future squad macro request four bolt-action shots and two HMG shots. A tank macro can select `weapon.hmg` and `weapon.cannon`. The macro supplies the equipment counts. Existing `weapon.fire` groups remain available to older macros; using the new pools requires selecting their category keys.
 
 - **Add Group:** enter a display name and, optionally, a unique machine key such as `weapon.fire`, `weapon.reload`, `voice.attack`, or `voice.reload`.
 - **Add Audio File:** opens the host's native audio FilePicker. Select an existing file in **The Forge Assets**. Choose its display name and optional label, then save.
@@ -135,4 +153,5 @@ Architecture: `sheet-integration.js` handles V1/V2 hooks and a header-only fallb
 - [The Forge: FilePicker Assets Library integration and recursive browsing](https://forums.forge-vtt.com/t/using-the-filepicker-to-interact-with-the-assets-library/98008)
 
 This module contains no Foundry or SWADE proprietary assets and is not an official Pinnacle or Foundry product.
+
 

@@ -2,7 +2,7 @@
 
 ## Completed locally
 
-`node --test` exercises 20 automated tests with mocked Foundry documents, permissions, FilePicker and HTMLAudioElement:
+`node --test` exercises 31 automated tests with mocked Foundry documents, permissions, FilePicker and HTMLAudioElement:
 
 - Actor, world Item and embedded Item independence; rename, serialized reload and flag duplication.
 - Flat macro results, category/group/search filters, empty results and random metadata.
@@ -15,6 +15,9 @@
 - Repeated V1/V2 header-control hooks add one archive control and preserve existing controls.
 - Six default Actor groups are seeded during creation and backfilled by the elected GM, including existing unlinked scene token Actors.
 - Default initialization preserves existing data, avoids duplicate groups, respects permissions and recovers from write failures.
+
+- Nine Item defaults cover world/embedded Items, initial inventories on new Actors, existing world/token inventories and newly created unlinked tokens.
+- Item migration preserves legacy weapon.fire clips and custom keys, keeps Actor/Item defaults separate and returns distinct bolt-action/HMG/cannon pools through the API.
 
 `node tools/validate.mjs` checks JSON, manifest links, referenced assets, relative ES imports, JavaScript syntax and English/Turkish key parity. The packaged ZIP is inspected for the root manifest and required files.
 
@@ -32,9 +35,12 @@ Use a test world on Foundry **13.351**, your installed SWADE version and The For
 6. **F — Macro API:** run `examples/random-weapon-and-voice.js` as a Script macro with the squad token selected. Confirm the console shows playable weapon and Actor references. An empty voice group must return `null` without stopping weapon retrieval. Inspect `api.listClips(weapon)` for cached folder clips.
 7. **G — Sheets:** open/close/rerender Actor, world Item and embedded Item sheets five times. Confirm exactly one header button, including for available legacy custom sheets. Verify SWADE and other modules' controls still work. Resize the archive and inspect scrolling, long paths, search and group/entry ordering.
 8. **H — Permissions:** use a non-GM Observer: inspection and preview work, editing controls are absent and `refreshFolder` rejects. Use a Limited/no-access user: API reads reject. Test an owner with no file-browse permission and a locked compendium. Revoke ownership while an archive is open and check that the next write rejects.
-9. **Install:** install using the public release manifest from a clean Forge test configuration. Confirm the module reports version 1.0.1 and assets load without 404 errors.
+9. **Install:** install using the public release manifest from a clean Forge test configuration. Confirm the module reports version 1.0.2 and assets load without 404 errors.
 
-10. **I — Default Actor groups (pending):** update a 1.0.0 world to 1.0.1 and reload as a GM. Existing Actors must contain `attack`, `take cover`, `enter building`, `movement`, `wounded`, `retreat` (or their existing keyed equivalents), preserving all old sounds and custom groups. Check an Actor with an existing `voice.attack` group and one with an unkeyed `Attack` group: neither should gain a duplicate attack group. Create a new Actor, import one and duplicate one; check all six groups. Reload again with two GMs online and verify group counts and IDs remain stable. Check an unlinked token Actor on another scene. Confirm Item archives remain unchanged. Test an Observer and a locked compendium without allowing unauthorized writes.
+10. **I — Default Actor groups (pending):** update a 1.0.0 world to 1.0.1 and reload as a GM. Existing Actors must contain `attack`, `take cover`, `enter building`, `movement`, `wounded`, `retreat` (or their existing keyed equivalents), preserving all old sounds and custom groups. Check an Actor with an existing `voice.attack` group and one with an unkeyed `Attack` group: neither should gain a duplicate attack group. Create a new Actor, import one and duplicate one; check all six groups. Reload again with two GMs online and verify group counts and IDs remain stable. Check an unlinked token Actor on another scene. Confirm Actor defaults do not replace Item archive data. Test an Observer and a locked compendium without allowing unauthorized writes.
+
+11. **J — Default Item weapon groups (pending):** update to 1.0.2 and reload as a GM. Check a world Item, an embedded squad Item and equipment on an unlinked tank token on another scene for `Bolt-Action`, `Semi-Auto`, `LMG`, `HMG`, `Sub-Machine`, `Pistol`, `Cannon`, `Reload`, `Explosion`. Existing sounds, IDs and custom groups, including legacy `weapon.fire`, must remain. Create/import/duplicate Items and import an Actor with initial equipment. Reload twice with two GMs connected: no duplicate groups or changed IDs. Add different audio to `weapon.bolt-action`, `weapon.hmg`, `weapon.cannon`, then use `getRandomClip` for each category on the correct embedded Item; the returned pools must stay separate. Confirm the Actor's six voice groups remain separate and ownership/locked-pack rules still apply.
 
 If something fails, capture the browser console error, Foundry/SWADE versions and reproduction steps in a repository issue. No tests should be reported as passed in-game until these steps have actually been performed.
+
 

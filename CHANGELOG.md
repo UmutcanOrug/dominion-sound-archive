@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.2
+
+- Item archives now start with `Bolt-Action`, `Semi-Auto`, `LMG`, `HMG`, `Sub-Machine`, `Pistol`, `Cannon`, `Reload` and `Explosion`, each with a separate `weapon.*` category key.
+- New world/embedded Items initialize automatically. One elected GM backfills world Items and equipment on all world Actors and unlinked scene token Actors. Initial equipment on newly created/imported Actors and new unlinked tokens is also initialized.
+- Existing groups, IDs, sound references and `weapon.fire` compatibility are preserved. Actor and Item defaults share an additive initialization service.
+- Added eleven automated tests for Item creation, migrations, permissions, recovery and mixed squad/tank sound pools; all 31 module tests pass locally with mocks.
+
 ## 1.0.1
 
 - Actors now start with `attack`, `take cover`, `enter building`, `movement`, `wounded` and `retreat` groups, each with a macro category key.
