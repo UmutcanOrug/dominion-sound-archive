@@ -1,0 +1,54 @@
+.dominion-sound-archive { --dsa-bg:#171c21; --dsa-panel:#222a32; --dsa-line:#3d4854; --dsa-text:#ecf0f2; --dsa-muted:#acbac6; --dsa-accent:#e6b96f; color:var(--dsa-text); min-width:380px; min-height:340px; }
+.dominion-sound-archive .window-content { padding:0; background:var(--dsa-bg); overflow:hidden; }
+.dominion-sound-archive .dsa-shell { display:flex; flex-direction:column; min-height:0; height:100%; overflow:hidden; }
+.dominion-sound-archive .dsa-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px; border-bottom:1px solid var(--dsa-line); flex-wrap:wrap; }
+.dominion-sound-archive .dsa-identity { display:flex; align-items:center; gap:12px; min-width:0; }
+.dominion-sound-archive .dsa-identity>i { font-size:26px; color:var(--dsa-accent); }
+.dominion-sound-archive .dsa-identity strong { font-size:17px; overflow-wrap:anywhere; }
+.dominion-sound-archive small { color:var(--dsa-muted); display:block; font-size:11px; line-height:1.5; }
+.dominion-sound-archive button { width:auto; min-width:28px; height:28px; margin:0; padding:3px 7px; color:var(--dsa-text); background:#2b3540; border:1px solid var(--dsa-line); border-radius:4px; font-size:12px; line-height:20px; box-shadow:none; }
+.dominion-sound-archive button:hover { border-color:var(--dsa-accent); background:#3a4550; }
+.dominion-sound-archive button:focus-visible { outline:2px solid var(--dsa-accent); outline-offset:2px; }
+.dominion-sound-archive button i { margin:0; }
+.dominion-sound-archive .dsa-primary { background:#59472e; border-color:#927345; }
+.dominion-sound-archive .dsa-tools,.dominion-sound-archive .dsa-controls { display:inline-flex; gap:4px; align-items:center; flex-shrink:0; }
+.dominion-sound-archive .dsa-controls button { border-color:transparent; background:transparent; padding:2px 4px; }
+.dominion-sound-archive .dsa-controls button:hover { background:#46505c; }
+.dominion-sound-archive .dsa-searchbox { display:flex; align-items:center; margin:12px 16px; padding:0 10px; gap:10px; border:1px solid var(--dsa-line); border-radius:5px; color:var(--dsa-muted); background:#11171c; }
+.dominion-sound-archive .dsa-search { width:100%; height:34px; border:0; background:transparent; color:var(--dsa-text); box-shadow:none; }
+.dominion-sound-archive .dsa-search::placeholder { color:var(--dsa-muted); }
+.dominion-sound-archive .dsa-library { flex:1; min-height:0; overflow-y:auto; scrollbar-color:#5b6774 #171c21; padding:0 16px 16px; }
+.dominion-sound-archive .dsa-group { border:1px solid var(--dsa-line); border-radius:6px; background:var(--dsa-panel); margin:0 0 12px; overflow:hidden; }
+.dominion-sound-archive summary { cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.dominion-sound-archive summary::-webkit-details-marker { display:none; }
+.dominion-sound-archive summary:before { content:'\25B8'; color:var(--dsa-muted); }
+.dominion-sound-archive details[open]>summary:before { content:'\25BE'; }
+.dominion-sound-archive .dsa-group-heading { padding:10px; background:#29333d; }
+.dominion-sound-archive .dsa-group-name { flex:1; min-width:0; font-weight:600; overflow-wrap:anywhere; }
+.dominion-sound-archive .dsa-group-name>i { color:var(--dsa-accent); margin-right:5px; }
+.dominion-sound-archive code { background:#161e26; color:#dfc69c; padding:2px 5px; font-size:11px; display:inline-block; font-weight:400; }
+.dominion-sound-archive .dsa-count { display:inline-block; border-radius:10px; font-size:11px; min-width:20px; text-align:center; padding:1px 5px; color:var(--dsa-muted); background:#141c23; }
+.dominion-sound-archive .dsa-add-actions { display:flex; gap:6px; padding:8px 10px; border-top:1px solid var(--dsa-line); }
+.dominion-sound-archive .dsa-entries { padding:0 8px 8px; }
+.dominion-sound-archive .dsa-entry { margin-top:6px; border:1px solid #37424d; border-radius:4px; background:#1b232b; }
+.dominion-sound-archive .dsa-folder-heading { padding:7px; }
+.dominion-sound-archive .dsa-folder-name { flex:1; min-width:0; overflow-wrap:anywhere; }
+.dominion-sound-archive .dsa-folder-name>i { color:#b9a680; }
+.dominion-sound-archive .dsa-folder-name small,.dominion-sound-archive .dsa-clip-info small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dominion-sound-archive .dsa-folder-clips { padding:0 6px 6px 22px; }
+.dominion-sound-archive .dsa-clip { display:flex; align-items:center; gap:9px; padding:8px; min-width:0; }
+.dominion-sound-archive .dsa-folder-clips .dsa-clip { border-top:1px solid #333d48; }
+.dominion-sound-archive .dsa-clip-info { flex:1; min-width:0; font-size:12px; }
+.dominion-sound-archive .dsa-clip-info strong { display:block; overflow-wrap:anywhere; }
+.dominion-sound-archive .dsa-label { color:var(--dsa-accent); font-size:11px; }
+.dominion-sound-archive .dsa-play { width:32px; height:32px; border-radius:50%; flex-shrink:0; color:var(--dsa-accent); }
+.dominion-sound-archive .dsa-play.playing { background:#6b512e; border-color:var(--dsa-accent); color:#fff; }
+.dominion-sound-archive .dsa-empty { text-align:center; color:var(--dsa-muted); padding:65px 20px; }
+.dominion-sound-archive .dsa-empty>i { font-size:36px; color:var(--dsa-accent); }
+.dominion-sound-archive .dsa-empty h3 { border:none; color:var(--dsa-text); }
+.dominion-sound-archive .dsa-empty-small,.dominion-sound-archive .dsa-no-results { color:var(--dsa-muted); padding:10px; font-size:12px; }
+.dominion-sound-archive .dsa-notice { margin:0 16px 10px; color:var(--dsa-accent); font-size:12px; }
+.dominion-sound-archive .dsa-footer { border-top:1px solid var(--dsa-line); padding:10px 16px; font-size:11px; color:var(--dsa-muted); }
+.dominion-sound-archive [hidden] { display:none !important; }
+.window-header .dsa-open-archive { width:auto; flex:0 1 auto; font-size:12px; padding:0 5px; white-space:nowrap; background:transparent; border:0; color:inherit; box-shadow:none; }
+@media (max-width:600px) { .dominion-sound-archive .dsa-toolbar { padding:10px; } .dominion-sound-archive .dsa-controls { flex-wrap:wrap; max-width:120px; } .dominion-sound-archive .dsa-library { padding:0 8px 8px; } }
