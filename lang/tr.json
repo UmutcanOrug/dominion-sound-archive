@@ -21,5 +21,6 @@
   "ForgeUnavailable":"The Forge dışında Forge Assets kaynağı kullanılamaz. Önbellekteki sesler kullanılabilir.", "SourceUnavailable":"Seçilen dosya kaynağı desteklenmiyor.",
   "FolderUnavailable":"Klasörün tamamı okunamadı. Erişimi ve kayıtlı yolu kontrol edin. Mevcut önbellek korundu.",
   "ScanLimit":"Tarama sınırı aşıldı (5.000 ses veya 100 User Data klasörü). Daha küçük bir klasör bağlayın.",
-  "PlaybackFailed":"Bu ses oynatılamıyor. Dosya adresini, tarayıcı codec desteğini ve dosya izinlerini kontrol edin:"
+  "PlaybackFailed":"Bu ses oynatılamıyor. Dosya adresini, tarayıcı codec desteğini ve dosya izinlerini kontrol edin:",
+  "ActorDefaultsFailed":"{count} Actor için varsayılan ses grupları kaydedilemedi. Mevcut arşivler korundu. Konsolu kontrol edip arşivleri belge sahibi olarak açmayı deneyin."
 }}
