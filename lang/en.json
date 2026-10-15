@@ -22,5 +22,6 @@
   "FolderUnavailable":"Could not read the entire folder. Check access and the saved path. Existing cached clips have been kept.",
   "ScanLimit":"Scan limit exceeded (5,000 audio files or 100 User Data directories). Link a smaller folder.",
   "PlaybackFailed":"Cannot preview this audio. Check the file URL, browser codec support and asset permissions:",
-  "ActorDefaultsFailed":"Default audio groups could not be saved for {count} Actor(s). Existing archives were kept. Check the console and try opening their archives as an owner."
+  "ActorDefaultsFailed":"Default audio groups could not be saved for {count} Actor(s). Existing archives were kept. Check the console and try opening their archives as an owner.",
+  "ItemDefaultsFailed":"Default weapon audio groups could not be saved for {count} Item(s). Existing archives were kept. Check the console and try opening their archives as an owner."
 }}
