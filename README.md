@@ -22,6 +22,21 @@ For local Foundry installation, extract the ZIP into `Data/modules/dominion-soun
 
 ## Use the archive
 
+Starting with **1.0.1**, Actors receive six default groups:
+
+| Group | Macro category key |
+| --- | --- |
+| `attack` | `voice.attack` |
+| `take cover` | `voice.take-cover` |
+| `enter building` | `voice.enter-building` |
+| `movement` | `voice.movement` |
+| `wounded` | `voice.wounded` |
+| `retreat` | `voice.retreat` |
+
+After updating, reload the world as a GM. One active GM automatically adds missing groups to every world Actor and existing unlinked scene token Actor. Newly created, imported and duplicated Actors receive them during creation. Items retain their own custom groups.
+
+Existing groups, IDs, labels, cached folders and sound references are preserved. A matching category key, or a matching name ignoring case/extra spaces, is reused. Matching groups without a category receive the key above; existing custom keys are preserved. Owner-opened archives also fill missing defaults. Default groups remain editable; if removed, missing defaults return the next time an owner opens the archive or a GM reloads the world. Unopened compendium packs are not scanned or unlocked; imported Actors receive defaults normally.
+
 - **Add Group:** enter a display name and, optionally, a unique machine key such as `weapon.fire`, `weapon.reload`, `voice.attack`, or `voice.reload`.
 - **Add Audio File:** opens the host's native audio FilePicker. Select an existing file in **The Forge Assets**. Choose its display name and optional label, then save.
 - **Add Folder:** opens the native folder FilePicker. Navigate into the directory and select it. Name it and optionally enable **Include subfolders**. Recursion is off by default.
@@ -120,3 +135,4 @@ Architecture: `sheet-integration.js` handles V1/V2 hooks and a header-only fallb
 - [The Forge: FilePicker Assets Library integration and recursive browsing](https://forums.forge-vtt.com/t/using-the-filepicker-to-interact-with-the-assets-library/98008)
 
 This module contains no Foundry or SWADE proprietary assets and is not an official Pinnacle or Foundry product.
+
