@@ -3,6 +3,7 @@ import { MODULE_ID, t, fmt, escapeHTML, pathName, report } from "./utils.js";
 import { selectAsset } from "./forge-browser.js";
 import { preview } from "./audio-preview.js";
 import { ensureActorDefaults } from "./actor-defaults.js";
+import { ensureItemDefaults } from "./item-defaults.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const windows = new Map();
@@ -241,6 +242,7 @@ export class ArchiveApp extends HandlebarsApplicationMixin(ApplicationV2) {
 export async function openArchive(document) {
   library.requireRead(document);
   await ensureActorDefaults(document);
+  await ensureItemDefaults(document);
   let app = windows.get(document.uuid);
   if (!app) {
     app = new ArchiveApp(document);
