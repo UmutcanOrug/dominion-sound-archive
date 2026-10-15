@@ -6,7 +6,7 @@ Persistent audio libraries for individual Foundry VTT **Actors and Items**, incl
 
 ## Install on The Forge
 
-1. Open your Forge Game Manager and the Bazaar's **Custom Manifest** installation option (or Foundry Setup → Add-on Modules → Install Module, if available for your hosting configuration).
+1. Open [The Forge Bazaar](https://forge-vtt.com/bazaar) and click **Install From Manifest** (or Foundry Setup → Add-on Modules → Install Module, if available for your hosting configuration).
 2. Paste this **manifest URL**, then install:
 
    ```text
@@ -108,7 +108,7 @@ node --test
 node tools/validate.mjs
 ```
 
-GitHub Actions validates source and packages the ZIP before publishing a versioned release. It runs when `module.json` changes on `main`, or when manually dispatched. For a new release, update `version`, the versioned `download` URL, package version, release notes and changelog together. Existing release tags are never overwritten automatically.
+For a new release, update `version`, the versioned `download` URL, package version, release notes and changelog together. Run the tests and validator, then package the module with `module.json` at the ZIP root and upload both files to a new versioned GitHub release.
 
 Architecture: `sheet-integration.js` handles V1/V2 hooks and a header-only fallback; `archive-app.js` owns the V2 application; `library-service.js` enforces permissions and persists flags; `forge-browser.js` resolves the configured V13 picker implementation and scans files; `audio-preview.js` manages one local HTML audio element; `api.js` exposes the read/refresh interface.
 
