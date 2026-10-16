@@ -167,6 +167,10 @@ export function reorder(document, {groupId, entryId, beforeId, offset}) {
 
 export function listClips(document, {groupId, category, search = ""} = {}) {
   const library = getLibrary(document);
+  // Older API macros can still read the migrated movement pool. Before migration,
+  // an actual legacy group keeps priority; Item category filters remain literal.
+  if (document.documentName === "Actor" && category === "voice.movement"
+    && !library.groups.some(group => group.category === category)) category = "voice.move";
   const clips = [];
   const query = String(search).toLocaleLowerCase();
   for (const group of library.groups) {

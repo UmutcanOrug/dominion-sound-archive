@@ -3,9 +3,13 @@ import { canEdit, getLibrary, mutate } from "./library-service.js";
 
 const normalizedName = name => String(name ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 
+function validateLibrary(library) {
+  if (library?.schemaVersion !== SCHEMA_VERSION || !Array.isArray(library.groups)) throw new Error(t("UnsupportedSchema"));
+}
+
 /** Shared, additive defaults for Actor and Item archives. */
 export function addDefaultGroups(library, definitions) {
-  if (library.schemaVersion !== SCHEMA_VERSION || !Array.isArray(library.groups)) throw new Error(t("UnsupportedSchema"));
+  validateLibrary(library);
   const matches = new Map();
   const used = new Set();
   for (const definition of definitions) {
@@ -30,9 +34,14 @@ export function addDefaultGroups(library, definitions) {
   return changed;
 }
 
-export function createDefaultGroupService(documentName, definitions) {
+export function createDefaultGroupService(documentName, definitions, migrate) {
   const pending = new Map();
-  const add = library => addDefaultGroups(library, definitions);
+  const add = library => {
+    validateLibrary(library);
+    const migrated = migrate?.(library) ?? false;
+    const added = addDefaultGroups(library, definitions);
+    return migrated || added;
+  };
   const seed = document => {
     if (document.documentName !== documentName) return;
     const raw = document.getFlag(MODULE_ID, "library");
