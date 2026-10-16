@@ -130,7 +130,7 @@ test("Actor and Item defaults remain separate after sharing the initialization s
   const actor = new Item("Actor.a"); actor.documentName = "Actor";
   assert.equal(await ensureItemDefaults(actor), false);
   assert.equal(await ensureActorDefaults(actor), true);
-  assert.equal(getLibrary(actor).groups.length, 6);
+  assert.equal(getLibrary(actor).groups.length, 7);
   assert(getLibrary(actor).groups.every(group => group.category.startsWith("voice.")));
   const item = new Item("Item.a");
   assert.equal(await ensureActorDefaults(item), false);
