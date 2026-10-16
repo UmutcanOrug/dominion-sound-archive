@@ -22,20 +22,25 @@ For local Foundry installation, extract the ZIP into `Data/modules/dominion-soun
 
 ## Use the archive
 
-Starting with **1.0.1**, Actors receive six default groups:
+As of **1.0.3**, Actors receive seven default groups:
 
 | Group | Macro category key |
 | --- | --- |
 | `attack` | `voice.attack` |
 | `take cover` | `voice.take-cover` |
 | `enter building` | `voice.enter-building` |
-| `movement` | `voice.movement` |
+| `move` | `voice.move` |
+| `run` | `voice.run` |
 | `wounded` | `voice.wounded` |
 | `retreat` | `voice.retreat` |
 
 After updating, reload the world as a GM. One active GM automatically adds missing groups to every world Actor and existing unlinked scene token Actor. Newly created, imported and duplicated Actors receive them during creation. Existing Item groups are preserved alongside the new defaults below.
 
-Existing groups, IDs, labels, cached folders and sound references are preserved. A matching category key, or a matching name ignoring case/extra spaces, is reused. Matching groups without a category receive the key above; existing custom keys are preserved. Owner-opened archives also fill missing defaults. Default groups remain editable; if removed, missing defaults return the next time an owner opens the archive or a GM reloads the world. Unopened compendium packs are not scanned or unlocked; imported Actors receive defaults normally.
+Version **1.0.3** replaces the old default `movement` group with `move` and `run`. On a GM reload or owner-opened archive, groups keyed `voice.movement` and unkeyed groups named `movement` migrate into `move` (`voice.move`). Their audio files, folder references and cached clips are retained; a new `run` (`voice.run`) pool starts empty. If a `move` pool already exists, legacy references merge into it. Different entries with colliding IDs are retained with distinct IDs. Existing custom display names and explicitly customized category keys are preserved. Existing run sounds remain in the run pool.
+
+For compatibility, Actor `listClips`/`getRandomClip` calls filtered by `voice.movement` fall back to `voice.move` when no original legacy category remains. New macros should use `voice.move` and `voice.run`; macros that inspect raw `getLibrary().groups` must use the new keys themselves.
+
+Other existing groups, IDs, labels, cached folders and sound references are preserved. A matching category key, or a matching name ignoring case/extra spaces, is reused. Matching groups without a category receive the key above; existing custom keys are preserved. Owner-opened archives also fill missing defaults. Default groups remain editable; if removed, missing defaults return the next time an owner opens the archive or a GM reloads the world. Unopened compendium packs are not scanned or unlocked; imported Actors receive defaults normally.
 
 Starting with **1.0.2**, all Items receive nine default weapon audio groups:
 
@@ -153,5 +158,6 @@ Architecture: `sheet-integration.js` handles V1/V2 hooks and a header-only fallb
 - [The Forge: FilePicker Assets Library integration and recursive browsing](https://forums.forge-vtt.com/t/using-the-filepicker-to-interact-with-the-assets-library/98008)
 
 This module contains no Foundry or SWADE proprietary assets and is not an official Pinnacle or Foundry product.
+
 
 

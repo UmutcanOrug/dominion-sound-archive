@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.3
+
+- Replaced the Actor default `movement` with separate `move` (`voice.move`) and `run` (`voice.run`) groups.
+- Migrates legacy movement files and folder references into move while creating a separate run pool. Existing move pools merge without losing references; repeat initialization is idempotent.
+- Preserves custom category keys and renamed display labels. Legacy Actor API category filters for `voice.movement` fall back to `voice.move` after migration.
+- Added eight migration/compatibility tests; all 39 module tests pass locally with mocks. Item weapon groups remain unchanged.
+
 ## 1.0.2
 
 - Item archives now start with `Bolt-Action`, `Semi-Auto`, `LMG`, `HMG`, `Sub-Machine`, `Pistol`, `Cannon`, `Reload` and `Explosion`, each with a separate `weapon.*` category key.
