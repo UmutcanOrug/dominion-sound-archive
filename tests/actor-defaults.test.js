@@ -118,7 +118,7 @@ test("duplicates keep their archives and fill missing defaults; a future schema 
   assert.equal(future.sourceUpdates, 0);
 });
 
-test("one group cannot satisfy two defaults when its name and category disagree", () => {
+test("a matching name never duplicates or replaces an existing custom category", () => {
   const library = {schemaVersion: 1, groups: [{id: "renamed", name: "movement", category: "voice.attack", entries: []}]};
   assert.equal(addActorDefaults(library), true);
   assert.equal(library.groups.length, 7);
@@ -142,7 +142,7 @@ test("failed migrations preserve old flags, continue to other Actors and can be 
 test("the registered preCreateActor hook seeds synchronously without a second database update", () => {
   const hooks = new Map(); globalThis.Hooks = {on: (name, callback) => hooks.set(name, callback)};
   registerActorDefaults();
-  assert.deepEqual([...hooks.keys()], ["preCreateActor"]);
+  assert.deepEqual([...hooks.keys()], ["preCreateActor", "createToken"]);
   const actor = new Actor("Actor.new");
   assert.equal(hooks.get("preCreateActor")(actor), undefined);
   assert.equal(actor.sourceUpdates, 1); assert.equal(actor.writes, 0);

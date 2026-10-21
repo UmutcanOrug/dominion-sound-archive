@@ -152,10 +152,11 @@ test("duplicates retain stable IDs and clips while filling missing groups; futur
   assert.equal(future.sourceUpdates, 0); assert.equal(future.writes, 0);
 });
 
-test("a conflicting group name/key cannot satisfy two default weapon categories", () => {
+test("a matching group name retains its custom key without duplicating the group", () => {
   const library = {schemaVersion: 1, groups: [{id: "renamed", name: "Cannon", category: "weapon.hmg", entries: []}]};
-  assert.equal(addItemDefaults(library), true); assert.equal(library.groups.length, 9);
-  assert.equal(library.groups.filter(group => group.category === "weapon.cannon").length, 1);
+  assert.equal(addItemDefaults(library), true); assert.equal(library.groups.length, 8);
+  assert.equal(library.groups.filter(group => group.name === "Cannon").length, 1);
+  assert.equal(library.groups.filter(group => group.category === "weapon.cannon").length, 0);
   assert.equal(addItemDefaults(library), false);
 });
 
