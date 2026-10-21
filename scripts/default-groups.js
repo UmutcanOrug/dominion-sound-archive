@@ -10,19 +10,10 @@ function validateLibrary(library) {
 /** Shared, additive defaults for Actor and Item archives. */
 export function addDefaultGroups(library, definitions) {
   validateLibrary(library);
-  const matches = new Map();
-  const used = new Set();
-  for (const definition of definitions) {
-    const group = library.groups.find(group => group.category === definition.category && !used.has(group));
-    if (group) { matches.set(definition, group); used.add(group); }
-  }
   let changed = false;
   for (const definition of definitions) {
-    let group = matches.get(definition);
-    if (!group) {
-      group = library.groups.find(group => !used.has(group) && normalizedName(group.name) === normalizedName(definition.name));
-      if (group) used.add(group);
-    }
+    const group = library.groups.find(group => group.category === definition.category)
+      ?? library.groups.find(group => normalizedName(group.name) === normalizedName(definition.name));
     if (group) {
       // Adopt unkeyed matching names without replacing existing custom macro keys.
       if (!group.category) { group.category = definition.category; changed = true; }
@@ -39,7 +30,7 @@ export function createDefaultGroupService(documentName, definitions, migrate) {
   const add = library => {
     validateLibrary(library);
     const migrated = migrate?.(library) ?? false;
-    const added = addDefaultGroups(library, definitions);
+    const added = addDefaultGroups(library, typeof definitions === "function" ? definitions() : definitions);
     return migrated || added;
   };
   const seed = document => {

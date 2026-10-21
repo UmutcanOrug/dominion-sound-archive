@@ -1,11 +1,13 @@
 import { MODULE_ID, report } from "./utils.js";
 import { createAPI } from "./api.js";
 import { openArchive, updateArchives } from "./archive-app.js";
+import { registerPrototypeSettings } from "./prototype-settings.js";
 import { registerSheetIntegration } from "./sheet-integration.js";
 import { registerActorDefaults, initializeActorDefaults } from "./actor-defaults.js";
 import { registerItemDefaults, initializeItemDefaults } from "./item-defaults.js";
 
 Hooks.once("init", () => {
+  registerPrototypeSettings();
   registerSheetIntegration(openArchive);
   registerActorDefaults();
   registerItemDefaults();

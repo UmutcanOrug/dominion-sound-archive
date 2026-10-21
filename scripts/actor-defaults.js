@@ -1,15 +1,8 @@
 import { MODULE_ID, fmt, report, uid, t } from "./utils.js";
 import { createDefaultGroupService } from "./default-groups.js";
 
-export const ACTOR_DEFAULT_GROUPS = Object.freeze([
-  {name: "attack", category: "voice.attack"},
-  {name: "take cover", category: "voice.take-cover"},
-  {name: "enter building", category: "voice.enter-building"},
-  {name: "move", category: "voice.move"},
-  {name: "run", category: "voice.run"},
-  {name: "wounded", category: "voice.wounded"},
-  {name: "retreat", category: "voice.retreat"}
-].map(Object.freeze));
+export { ACTOR_DEFAULT_GROUPS } from "./prototype-data.js";
+import { getPrototype } from "./prototype-data.js";
 
 const normalizedName = name => String(name ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -39,7 +32,7 @@ function migrateMovementGroups(library) {
   return true;
 }
 
-const defaults = createDefaultGroupService("Actor", ACTOR_DEFAULT_GROUPS, migrateMovementGroups);
+const defaults = createDefaultGroupService("Actor", () => getPrototype("voice").groups, migrateMovementGroups);
 export const addActorDefaults = defaults.add;
 export const seedNewActor = defaults.seed;
 export const ensureActorDefaults = defaults.ensure;
@@ -70,5 +63,9 @@ export function registerActorDefaults() {
   Hooks.on("preCreateActor", document => {
     try { seedNewActor(document); }
     catch (error) { report(error); }
+  });
+  Hooks.on("createToken", (token, _options, userId) => {
+    if (token.actorLink || (game.users.activeGM?.id ?? userId) !== game.user.id) return;
+    return ensureActorDefaults(token.actor).catch(report);
   });
 }

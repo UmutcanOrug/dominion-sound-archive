@@ -1,19 +1,10 @@
 import { MODULE_ID, fmt, report } from "./utils.js";
 import { createDefaultGroupService } from "./default-groups.js";
 
-export const ITEM_DEFAULT_GROUPS = Object.freeze([
-  {name: "Bolt-Action", category: "weapon.bolt-action"},
-  {name: "Semi-Auto", category: "weapon.semi-auto"},
-  {name: "LMG", category: "weapon.lmg"},
-  {name: "HMG", category: "weapon.hmg"},
-  {name: "Sub-Machine", category: "weapon.sub-machine"},
-  {name: "Pistol", category: "weapon.pistol"},
-  {name: "Cannon", category: "weapon.cannon"},
-  {name: "Reload", category: "weapon.reload"},
-  {name: "Explosion", category: "weapon.explosion"}
-].map(Object.freeze));
+export { ITEM_DEFAULT_GROUPS } from "./prototype-data.js";
+import { getPrototype } from "./prototype-data.js";
 
-const defaults = createDefaultGroupService("Item", ITEM_DEFAULT_GROUPS);
+const defaults = createDefaultGroupService("Item", () => getPrototype("weapon").groups);
 export const addItemDefaults = defaults.add;
 export const seedNewItem = defaults.seed;
 export const ensureItemDefaults = defaults.ensure;
