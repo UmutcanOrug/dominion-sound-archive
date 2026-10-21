@@ -1,0 +1,19 @@
+<section class="dsa-shell">
+  <header class="dsa-toolbar"><div class="dsa-identity"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><strong>{{title}}</strong></div>
+    <button type="button" data-prototype-action="add" class="dsa-primary" {{#if busy}}disabled{{/if}}><i class="fa-solid fa-plus"></i> {{localize "DSA.AddGroup"}}</button></header>
+  <p class="dsa-prototype-hint">{{localize "DSA.PrototypeHint"}}</p>
+  <p class="dsa-prototype-hint">{{localize "DSA.PrototypeKeyHint"}} <code>{{prefix}}…</code></p>
+  <div class="dsa-prototype-rows">
+    {{#each rows}}
+    <div class="dsa-prototype-row">
+      <label>{{localize "DSA.Name"}}<input type="text" data-field="name" value="{{name}}" maxlength="200" required {{#if ../busy}}disabled{{/if}}></label>
+      <label>{{localize "DSA.PrototypeCategory"}}<input type="text" data-field="category" value="{{category}}" maxlength="100" required spellcheck="false" {{#if ../busy}}disabled{{/if}}></label>
+      <button type="button" data-prototype-action="remove" data-index="{{@index}}" aria-label="{{localize 'DSA.PrototypeRemove'}}" title="{{localize 'DSA.PrototypeRemove'}}" {{#if ../busy}}disabled{{/if}}><i class="fa-solid fa-trash"></i></button>
+    </div>
+    {{else}}<p class="dsa-empty-small">{{localize "DSA.PrototypeEmpty"}}</p>{{/each}}
+  </div>
+  <footer class="dsa-footer dsa-prototype-footer">
+    <button type="button" data-prototype-action="cancel" {{#if busy}}disabled{{/if}}>{{localize "DSA.Cancel"}}</button>
+    <button type="button" class="dsa-primary" data-prototype-action="save" {{#if busy}}disabled{{/if}}><i class="fa-solid fa-floppy-disk"></i> {{localize "DSA.Save"}}</button>
+  </footer>
+</section>
