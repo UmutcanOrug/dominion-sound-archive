@@ -20,9 +20,19 @@ The [release](https://github.com/UmutcanOrug/dominion-sound-archive/releases/lat
 
 For local Foundry installation, extract the ZIP into `Data/modules/dominion-sound-archive/`. The ZIP has `module.json` at its root. Do not use GitHub's automatically generated **Source code (zip)** as the installation manifest or package.
 
+## Prototype groups (1.0.4)
+
+As GM, open **Configure Settings → Dominion Sound Archive → Prototype voice** or **Prototype weapon**. These world settings start with the seven voice and nine weapon groups listed below. Use **Add Group** to add as many rows as needed, enter a display name and a unique **voice.*** or **weapon.*** category key, then **Save**. Only group names and keys are shared; sounds and folders stay in each sheet’s own archive. Blank/duplicate names, duplicate keys, wrong prefixes and the reserved legacy **voice.movement** key are rejected before saving.
+
+Save immediately applies missing groups to world Actors, world Items, Actor inventories and unlinked token Actors/inventories on every scene, using the elected active GM. No Forge refresh is normally required. New/imported/duplicated documents and owner-opened archives use the current prototype. A GM reload retries unfinished application. Compendium packs are not mass-scanned or unlocked; their imported documents receive defaults.
+
+**Preservation and duplicate rules:** exact category key wins; otherwise a group with the same name ignoring case and extra whitespace is reused. Its existing ID, display name, custom category key, files, folders, cached clips, labels, exclusions and order are kept. A name match with no key receives the prototype key. A name match with an existing custom key retains that key; macros for that sheet must continue using its actual key. Already duplicated local groups are kept rather than destructively consolidated.
+
+Synchronization adds missing groups only. It never deletes, renames or replaces existing sheet groups. Editing a prototype name affects newly created groups; an existing keyed group keeps its local name. Changing a key may add a group only where neither its key nor its name matches. Removing a prototype row stops future additions but leaves all existing copies and sounds intact. Use **Cancel** or close the window to discard an unsaved draft. Saving a stale draft after another GM changes that same prototype is rejected; reopen and merge your edits. Simultaneous writes from different clients still follow Foundry’s normal last-write-wins behavior.
+
 ## Use the archive
 
-As of **1.0.3**, Actors receive seven default groups:
+The initial voice prototype contains these seven groups:
 
 | Group | Macro category key |
 | --- | --- |
@@ -161,3 +171,5 @@ This module contains no Foundry or SWADE proprietary assets and is not an offici
 
 
 
+
+Settings API reference: [Foundry V13 ClientSettings](https://foundryvtt.com/api/v13/classes/foundry.helpers.ClientSettings.html).

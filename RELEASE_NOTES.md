@@ -1,19 +1,14 @@
-Dominion Sound Archive 1.0.3 for Foundry VTT V13 (target build 351).
+Dominion Sound Archive 1.0.4 for Foundry VTT v13.
 
-The Actor default `movement` is replaced by two independent groups:
-- move (`voice.move`)
-- run (`voice.run`)
+GM: Configure Settings → Dominion Sound Archive → Prototype voice / Prototype weapon.
 
-After updating, reload the world as a GM. Existing default movement files and linked folders migrate into move; run starts empty unless you already populated it. Existing move pools receive the legacy references without losing sounds. Existing world and unlinked scene token Actors are migrated, and new/imported/duplicated Actors receive the new defaults. Owners can also open their archive to initialize it. Item weapon groups remain unchanged.
+Manage group names and voice.* / weapon.* category keys, starting from the existing seven voice and nine weapon defaults. Add any number of rows and Save to apply missing groups to world sheets, embedded equipment and unlinked scene token sheets. New/imported/duplicated documents use the current prototype. No Forge refresh is normally required; a GM world reload retries incomplete application.
 
-Legacy Actor listClips/getRandomClip filters using voice.movement fall back to voice.move after migration. New macros and direct readers of raw library groups should use voice.move and voice.run. Custom category keys are preserved.
+An existing category key or matching name is reused without duplicates. Existing IDs, local names/custom keys, audio files, linked folders, caches, labels and exclusions are preserved. Editing/removing a prototype never deletes or renames groups already on a sheet. Only names/keys are shared, not sounds/folders. Compendiums are not mass-scanned; imported documents receive defaults.
+
+Validation: 61 automated module tests, browser checks with the real editor/template in a mocked Foundry shell, manifest/import/syntax/localization and ZIP checks. Not tested in a running Foundry 13.351/SWADE/Forge world.
 
 Install/update manifest:
 https://github.com/UmutcanOrug/dominion-sound-archive/releases/latest/download/module.json
 
-Assets:
-- `module.json`: Foundry/Forge installation manifest.
-- `dominion-sound-archive.zip`: installable module, with module.json at the ZIP root.
-- `SHA256SUMS.txt`: release asset checksums.
-
-Validation: 39 module tests using mocked Foundry/Forge/browser objects, plus manifest/import/syntax/localization/package checks. **Not tested inside a running Foundry 13.351/SWADE/Forge world.** See TESTING.md for the manual acceptance steps.
+Assets: module.json, dominion-sound-archive.zip (manifest at ZIP root), SHA256SUMS.txt.

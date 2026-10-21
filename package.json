@@ -1,6 +1,6 @@
 {
   "name": "dominion-sound-archive",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "type": "module",
   "scripts": {"test": "node --test", "validate": "node tools/validate.mjs"},

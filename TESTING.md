@@ -1,3 +1,25 @@
+# 1.0.4 prototype validation
+
+61 automated module tests pass (39 archive/default tests plus 22 prototype settings, synchronization and editor tests). These use mock Foundry documents/settings/ApplicationV2 shells; they are not in-game tests. Coverage includes:
+
+- Existing category or normalized-name matches retain IDs, custom keys, audio files, linked folders, caches, labels, exclusions and order without duplicates.
+- Add/edit/remove/empty prototypes; more than 500 rows (600 tested); repeated saves/reloads; 24 rich archives over eight configuration revisions.
+- World and synthetic Actors, world and embedded/synthetic Items, new/imported/duplicated documents and owner-opened archives.
+- Concurrent local file edits, same-revision broadcast coalescing, later revisions during a running pass, elected GM and locked/read-only/future-schema guards.
+- Invalid/duplicate rows, setting-write failure, document-write failure and retry; stale editor protection and draft preservation; redraw/save double-click guards.
+
+Browser smoke checks used the actual module editor, Handlebars template and sync service in a local mock Foundry shell: add/save/reopen, draft cancellation, invalid duplicate key rejection and correction, weapon row removal retaining copies on all test Items, and a same-name voice group retaining its original custom key and personal folder. No actual Forge asset requests or real Foundry server were used.
+
+Manual acceptance on a backed-up Foundry/Forge test world remains pending:
+
+1. Update from 1.0.3, reload as GM and check Configure Settings contains both prototype menus and the current seven/nine defaults.
+2. Put local audio and cached folders in a same-key group, a same-name unkeyed group and a same-name custom-key group. Record/export flags. Add the matching prototype and Save. Verify no duplicate, no missing references, unchanged custom keys/IDs/exclusions and no audio file operations.
+3. Add a unique voice and weapon group; check world Actors/Items, inventories and unlinked tokens on another scene. Create/import/duplicate Actors and Items and drop a new unlinked token. Check the right definitions appear.
+4. Rename/remove prototype rows, Save twice, close/reopen and reload. Existing sheet groups and sounds must remain; newly created documents follow the edited list. Clearing prototypes must not clear existing archives.
+5. Open with two GMs. Save a prototype in one and try saving a stale draft in the other. Confirm stale-save rejection and a single elected writer. Test failure/reconnect/retry and non-GM/locked-pack restrictions.
+
+---
+
 # Validation and remaining in-game tests
 
 ## Completed locally

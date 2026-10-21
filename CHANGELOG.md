@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4 — 2026-10-22
+
+- Added GM-only Prototype voice and Prototype weapon menus in Configure Settings, with world-persistent group names and category keys and no fixed group count. Initial definitions match 1.0.3.
+- Save applies missing groups to world Actors/Items, embedded equipment and unlinked token Actors/equipment. Creation/import/duplication and owner-opened archives use current definitions.
+- Reuse a category key or normalized name without duplicating groups. Keep existing custom keys, names, IDs and every sound/folder reference. Removed/edited prototypes never delete or rename existing sheet groups.
+- Validate all rows before writes; reject stale editor drafts, preserve unsaved input on failure, lock controls during redraw/save and retry failed document updates without resetting archives.
+- Verified with 61 automated module tests and browser UI checks in a mock Foundry shell. Live Foundry/Forge testing remains pending.
+
 ## 1.0.3
 
 - Replaced the Actor default `movement` with separate `move` (`voice.move`) and `run` (`voice.run`) groups.
