@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5
+
+- Added Automatic Sound Matching for SWADE. GMs assign Attack, Hurt and Death audio pools to character names in Configure Settings.
+- Plays one clip from the matching pool for public weapon attacks, increased Wounds, and tokens marked Dead or Defeated. Audio uses Foundry's interface channel and goes to clients viewing the scene. Hidden tokens only broadcast to GMs.
+- Added checks for exact name matching, linked and unlinked token events, private rolls, repeated defeat notifications and saving the GM menu.
+
 ## 1.0.4 — 2026-10-22
 
 - Added GM-only Prototype voice and Prototype weapon menus in Configure Settings, with world-persistent group names and category keys and no fixed group count. Initial definitions match 1.0.3.

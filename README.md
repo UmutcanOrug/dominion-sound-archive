@@ -20,6 +20,16 @@ The [release](https://github.com/UmutcanOrug/dominion-sound-archive/releases/lat
 
 For local Foundry installation, extract the ZIP into `Data/modules/dominion-sound-archive/`. The ZIP has `module.json` at its root. Do not use GitHub's automatically generated **Source code (zip)** as the installation manifest or package.
 
+## Automatic Sound Matching
+
+As GM in a SWADE world, open **Configure Settings → Dominion Sound Archive → Automatic Sound Matching**. Add a sound set, enter the character's Actor name, add files under **Attack**, **Hurt** and **Death** using the file picker or one path per line, then select **Save**. The name must match the whole Actor name. Matching ignores case and extra whitespace. The token name is checked when the Actor name has no set. Multiple clips in a pool are picked at random. Leave a pool empty to keep that event silent.
+
+- **Attack** plays when a public SWADE weapon attack roll completes. A weapon damage roll and a Benny reroll are separate and do not play this cue.
+- **Hurt** plays on an increase in Wounds. Healing and Fatigue are separate.
+- **Death** plays when the token becomes Dead or is marked Defeated in the combat tracker. SWADE's Incapacitated condition alone does not trigger Death. A simultaneous wound and defeat favors Death.
+
+Sounds go to active clients viewing the same scene. Hidden tokens only broadcast to GMs. Each listener needs access to the chosen Foundry or Forge file. The menu's preview is local. Automatic sets are world settings, independent of the sheet's Sound Archive and its macro API. If a macro both makes a native weapon attack and plays its own cue, it can produce both sounds. The menu switch controls all automatic playback.
+
 ## Prototype groups (1.0.4)
 
 As GM, open **Configure Settings → Dominion Sound Archive → Prototype voice** or **Prototype weapon**. These world settings start with the seven voice and nine weapon groups listed below. Use **Add Group** to add as many rows as needed, enter a display name and a unique **voice.*** or **weapon.*** category key, then **Save**. Only group names and keys are shared; sounds and folders stay in each sheet’s own archive. Blank/duplicate names, duplicate keys, wrong prefixes and the reserved legacy **voice.movement** key are rejected before saving.

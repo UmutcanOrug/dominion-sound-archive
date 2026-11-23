@@ -1,4 +1,12 @@
-Dominion Sound Archive 1.0.4 for Foundry VTT v13.
+Dominion Sound Archive 1.0.5 for Foundry VTT v13 and SWADE adds Automatic Sound Matching.
+
+In Configure Settings → Dominion Sound Archive → Automatic Sound Matching, create a set with the character's name and assign one or more clips for Attack, Hurt and Death. Save to apply it. A whole-name Actor match takes priority over the token name. Use the file picker or enter one path per line.
+
+Attack plays on public native SWADE weapon rolls, Hurt when Wounds increase, and Death when the token becomes Dead or is marked Defeated. Sounds play on the current scene using Foundry's audio channel. Existing macros can continue using their own Sound Archive pools.
+
+The Forge manifest and the installable ZIP are attached. Local checks cover 72 automated tests. Live Foundry/Forge playback validation is pending.
+
+## From 1.0.4
 
 GM: Configure Settings → Dominion Sound Archive → Prototype voice / Prototype weapon.
 
