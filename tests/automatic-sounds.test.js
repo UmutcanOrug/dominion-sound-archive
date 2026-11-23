@@ -30,6 +30,7 @@ beforeEach(() => {
     getActiveTokens() { return [token]; }
   }
   actor = Object.assign(new Actor(), {name: " izci  ", documentName: "Actor", uuid: "Actor.a",
+    id: "a", items: new Map([["w", {id: "w", type: "weapon"}], ["p", {id: "p", type: "power"}]]),
     statuses: new Set(), system: {wounds: {value: 1}}});
   scene = {id: "s", tokens: new Map()};
   token = {id: "t", uuid: "Scene.s.Token.t", name: "Squad 2", parent: scene, actor};
@@ -50,7 +51,7 @@ beforeEach(() => {
   registerAutomaticSoundHooks();
 });
 
-test("normalizes whole Actor names, prefers them over the token label and chooses within the requested pool", () => {
+test("normalizes names, prefers Actor name matches over token matches and chooses within the requested pool", () => {
   const sets = validateSoundSets([{name: " İzci   Takımı ", attack: ["a.ogg", "a.ogg", "b.wav"], hurt: [], death: []}, state.sets[1]]);
   assert.deepEqual(sets[0].attack, ["a.ogg", "b.wav"]);
   assert.equal(chooseAutomaticSound(sets, "İZCİ takımı", "Squad 2", "attack", () => 0.9), "b.wav");
@@ -59,6 +60,19 @@ test("normalizes whole Actor names, prefers them over the token label and choose
   assert.equal(chooseAutomaticSound(sets, "İzci Takımı", "Squad 2", "hurt"), undefined);
   assert.throws(() => validateSoundSets([sets[0], {...sets[0], name: "İZCİ takımı"}]), /AutoDuplicateName/);
   assert.throws(() => validateSoundSets([{...sets[0], hurt: ["javascript:test.ogg"]}]), /InvalidPath/);
+});
+
+test("partial names cover Auranii units, with the longest rule that has clips winning per event", () => {
+  const sets = [
+    {name: "Auranii", attack: ["army.ogg"], hurt: ["army-hurt.ogg"], death: []},
+    {name: "Auranii Rifleman", attack: ["rifle.ogg"], hurt: [], death: []},
+    {name: "Alternate token name", attack: ["token.ogg"], hurt: [], death: []}
+  ];
+  assert.equal(chooseAutomaticSound(sets, "7th Auranii Legionarii", "", "attack"), "army.ogg");
+  assert.equal(chooseAutomaticSound(sets, "VETERAN AURANII RIFLEMAN", "Alternate token name", "attack"), "rifle.ogg");
+  assert.equal(chooseAutomaticSound(sets, "Auranii Rifleman", "", "hurt"), "army-hurt.ogg");
+  assert.equal(chooseAutomaticSound(sets, "Other", "Alternate Token Name 2", "attack"), "token.ogg");
+  assert.equal(chooseAutomaticSound(sets, "Other", "", "attack"), undefined);
 });
 
 test("folder pools keep Forge metadata, respect exclusions and play only unique cached paths", () => {
@@ -91,6 +105,43 @@ test("native attack-tagged messages broadcast from their originator once and ski
   await actor.rollSkill("unskilled", {item: weapon});
   fire("createChatMessage", message("r", {rolls: [{options: {rollType: "attack", rerollMode: "benny"}}]}), {}, userId);
   assert.equal(audio.length, 1);
+});
+
+test("SWADE Tools 2.3.0 weapon cards play for skill and attribute attacks, including a synthetic speaker", () => {
+  for (const rolltype of ["skill", "attribute"]) {
+    const flags = {"swade-tools": {rolltype, itemroll: "w", useactor: "a", usetoken: token.id, userof: 3}};
+    const msg = message(rolltype, {flags, speakerActor: undefined});
+    fire("createChatMessage", msg, {}, "another-client");
+    fire("createChatMessage", msg, {}, userId);
+    fire("createChatMessage", msg, {}, userId);
+  }
+  assert.deepEqual(audio.map(played => played.src), ["attack.ogg", "attack.ogg"]);
+});
+
+test("SWADE Tools damage, powers, non-item checks, private rolls and post-create reroll metadata remain silent", () => {
+  const attackFlags = {rolltype: "skill", itemroll: "w", useactor: "a", usetoken: token.id};
+  const send = (id, flags, extra = {}) => fire("createChatMessage", message(id, {flags: {"swade-tools": flags}, ...extra}), {}, userId);
+  send("damage", {...attackFlags, rolltype: "damage"});
+  send("soak", {...attackFlags, rolltype: "soak"});
+  send("power", {...attackFlags, itemroll: "p"});
+  send("check", {...attackFlags, itemroll: undefined});
+  send("private", attackFlags, {whisper: ["gm"]});
+  send("other-scene", attackFlags, {speaker: {scene: "other", token: token.id}});
+  send("reroll", attackFlags, {rolls: [{options: {rerollMode: "benny"}}]});
+  const msg = message("tool-reroll");
+  fire("createChatMessage", msg, {}, userId);
+  msg.flags = {"swade-tools": attackFlags};
+  fire("updateChatMessage", msg, {flags: msg.flags}, {}, userId);
+  assert.deepEqual(audio, []);
+});
+
+test("SWADE Tools resolves a vehicle-owned weapon while using the token that made the attack", () => {
+  const vehicle = {id: "truck", items: new Map([["gun", {type: "weapon"}]])};
+  scene.tokens.set("vehicle", {actor: vehicle});
+  const flags = {"swade-tools": {rolltype: "skill", itemroll: "gun", useactor: "a", usetoken: token.id,
+    usevehicle: "truck", usevehicletoken: "vehicle"}};
+  fire("createChatMessage", message("vehicle", {flags}), {}, userId);
+  assert.deepEqual(audio.map(played => played.src), ["attack.ogg"]);
 });
 
 test("cancellation, silent rolls, nonweapon actions, damage dice, private rolls and offscene messages do not play Attack", async () => {
@@ -184,10 +235,10 @@ test("Defeated and Dead in the same update sequence play Death once, suppress Hu
   assert.deepEqual(audio.map(a => a.src), ["death.ogg", "death.ogg"]);
 });
 
-test("Incapacitated, item effects, disabled effects and remote clients do not trigger Death", () => {
-  const effect = {uuid: "e", parent: actor, active: true, statuses: new Set(["incapacitated"])};
+test("unrelated, item, disabled and remote effects remain silent until Incapacitated is enabled", () => {
+  const effect = {uuid: "e", parent: actor, active: true, statuses: new Set(["shaken"])};
   fire("createActiveEffect", effect, {}, userId);
-  effect.statuses = new Set(["dead"]);
+  effect.statuses = new Set(["incapacitated"]);
   fire("createActiveEffect", {...effect, parent: {documentName: "Item"}}, {}, userId);
   fire("createActiveEffect", effect, {}, "other");
   effect.active = false;
@@ -198,6 +249,45 @@ test("Incapacitated, item effects, disabled effects and remote clients do not tr
   effect.active = true;
   fire("updateActiveEffect", effect, {disabled: false}, options, userId);
   assert.deepEqual(audio.map(a => a.src), ["death.ogg"]);
+});
+
+test("Incapacitated plays Death without a combatant defeat, coalesces pending Hurt and can play after recovery", async () => {
+  const effect = {uuid: "e", parent: actor, active: true, statuses: new Set(["incapacitated"])};
+  updateWounds(2);
+  actor.statuses.add("incapacitated");
+  fire("createActiveEffect", effect, {}, userId);
+  await new Promise(resolve => setTimeout(resolve, 245));
+  assert.deepEqual(audio.map(a => a.src), ["death.ogg"]);
+  actor.statuses.delete("incapacitated");
+  fire("deleteActiveEffect", effect, {}, userId);
+  actor.statuses.add("incapacitated");
+  fire("createActiveEffect", effect, {}, userId);
+  assert.deepEqual(audio.map(a => a.src), ["death.ogg", "death.ogg"]);
+});
+
+test("personal Actor files and folders override global audio only for their event, with legacy Wounded support", async () => {
+  const file = (path, id) => ({type: "file", name: path, path, id});
+  const folders = [{type: "folder", id: "f", clips: [file("local-hurt.ogg", "inside")]}];
+  actor.testUserPermission = () => true;
+  const groups = [
+    {id: "a", category: "voice.attack", name: "Attack", entries: [file("local-attack.ogg", "a")]},
+    {id: "h", category: "voice.hurt", name: "Hurt", entries: []},
+    {id: "w", category: "voice.wounded", name: "Wounded", entries: folders},
+    {id: "d", category: "voice.death", name: "Death", entries: []}
+  ];
+  actor.getFlag = () => ({schemaVersion: 1, groups});
+  const flags = {"swade-tools": {rolltype: "skill", itemroll: "w", useactor: "a"}};
+  fire("createChatMessage", message("personal", {flags}), {}, userId);
+  updateWounds(2);
+  await new Promise(resolve => setTimeout(resolve, 245));
+  groups[1].entries.push(file("explicit-hurt.ogg", "hurt"));
+  updateWounds(3);
+  await new Promise(resolve => setTimeout(resolve, 245));
+  fire("createActiveEffect", {parent: actor, active: true, statuses: new Set(["incapacitated"])}, {}, userId);
+  assert.deepEqual(audio.map(a => a.src), ["local-attack.ogg", "local-hurt.ogg", "explicit-hurt.ogg", "death.ogg"]);
+  groups[0].entries.length = 0;
+  fire("createChatMessage", message("fallback", {flags}), {}, userId);
+  assert.equal(audio.at(-1).src, "attack.ogg");
 });
 
 test("outside SWADE no roll or document handlers are registered", () => {

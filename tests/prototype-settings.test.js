@@ -64,7 +64,7 @@ const draft = (kind, name, key) => { const value = getPrototype(kind); value.gro
 
 test("Configure Settings registers two world settings and GM-only ApplicationV2 menus with the current defaults", () => {
   assert.equal(registered.size, 2); assert.equal(menus.size, 2);
-  for (const [kind, key, Type, count] of [["voice", "prototypeVoice", PrototypeVoiceSettings, 7], ["weapon", "prototypeWeapon", PrototypeWeaponSettings, 9]]) {
+  for (const [kind, key, Type, count] of [["voice", "prototypeVoice", PrototypeVoiceSettings, 9], ["weapon", "prototypeWeapon", PrototypeWeaponSettings, 9]]) {
     const config = registered.get(key), menu = menus.get(`${key}Menu`);
     assert.equal(config.scope, "world"); assert.equal(config.type, Object); assert.equal(config.config, false);
     assert.equal(menu.restricted, true); assert.equal(menu.type, Type);
@@ -111,7 +111,7 @@ test("existing category or normalized name reuses the original group without rem
   game.actors = actors;
   await savePrototype("voice", draft("voice", "Charge now", "voice.charge"), getPrototype("voice"));
   for (const [i, actor] of actors.entries()) {
-    assert.equal(actor.data.groups.length, 8);
+    assert.equal(actor.data.groups.length, 10);
     const initial = [categoryMatch, nameMatch, noKey][i];
     assert.deepEqual(actor.data.groups[0], i === 2 ? {...initial, category: "voice.charge"} : initial);
     assert.equal(actor.data.groups.filter(g => g.category === "voice.charge" || /charge\s+now/i.test(g.name)).length, 1);
@@ -142,7 +142,7 @@ test("editing or removing prototype rows never renames or deletes existing sheet
   assert.deepEqual(actor.data.groups.slice(0, before.groups.length), before.groups);
   original = getPrototype("voice"); await savePrototype("voice", {schemaVersion: 1, groups: []}, original);
   const snapshot = structuredClone(actor.data); await ensureActorDefaults(actor); assert.deepEqual(actor.data, snapshot);
-  const newcomer = new Document("Actor", "Actor.new"); seedNewActor(newcomer); assert.equal(newcomer.data.groups.length, 0);
+  const newcomer = new Document("Actor", "Actor.new"); seedNewActor(newcomer); assert.deepEqual(newcomer.data.groups.map(group => group.category), ["voice.attack", "voice.hurt", "voice.death"]);
 });
 
 test("new, imported and duplicated Actors and Items read the latest saved prototype at creation", async () => {
@@ -256,7 +256,7 @@ test("more than 500 prototype rows persist and propagate without a fixed group l
   const groups = Array.from({length: 600}, (_, i) => ({name: `Command ${i}`, category: `voice.command-${i}`}));
   const actor = new Document("Actor", "Actor.large", [group("private", "Private", "voice.private")]); game.actors = [actor];
   await savePrototype("voice", {schemaVersion: 1, groups}, getPrototype("voice"));
-  assert.equal(getPrototype("voice").groups.length, 600); assert.equal(actor.data.groups.length, 601);
+  assert.equal(getPrototype("voice").groups.length, 600); assert.equal(actor.data.groups.length, 604);
   const snapshot = structuredClone(actor.data); await synchronizePrototypes(); assert.deepEqual(actor.data, snapshot);
 });
 
@@ -285,7 +285,7 @@ function mockElement(rows) {
 }
 
 test("editor drafts capture typed values on add/remove, Cancel leaves settings unchanged, Save persists then closes", async () => {
-  const editor = new PrototypeVoiceSettings(), initial = getPrototype("voice"); assert.equal((await editor._prepareContext()).rows.length, 7);
+  const editor = new PrototypeVoiceSettings(), initial = getPrototype("voice"); assert.equal((await editor._prepareContext()).rows.length, 9);
   const typed = [...initial.groups, {name: "Fresh input", category: "voice.fresh"}]; editor.element = mockElement(typed);
   await editor.perform("add"); assert.deepEqual(editor.rows.slice(0, -1), typed);
   editor.element = mockElement(editor.rows); await editor.perform("remove", editor.rows.length - 1); assert.deepEqual(editor.rows, typed);

@@ -32,13 +32,13 @@ beforeEach(() => {
   globalThis.ui = {notifications: {warn() {}, error() {}}};
 });
 
-test("new Actors receive exactly seven keyed groups before persistence, including an unsaved Actor", () => {
+test("new Actors receive exactly nine keyed groups before persistence, including an unsaved Actor", () => {
   const actor = new Actor(undefined); actor.uuid = undefined;
   seedNewActor(actor);
   const groups = actor.getFlag(namespace, "library").groups;
-  assert.deepEqual(groups.map(group => group.name), ["attack", "take cover", "enter building", "move", "run", "wounded", "retreat"]);
+  assert.deepEqual(groups.map(group => group.name), ["attack", "take cover", "enter building", "move", "run", "wounded", "retreat", "hurt", "death"]);
   assert.deepEqual(groups.map(group => group.category), ACTOR_DEFAULT_GROUPS.map(group => group.category));
-  assert.equal(new Set(groups.map(group => group.id)).size, 7);
+  assert.equal(new Set(groups.map(group => group.id)).size, 9);
   assert(groups.every(group => group.entries.length === 0));
   assert.equal(actor.sourceUpdates, 1); assert.equal(actor.writes, 0);
   const snapshot = structuredClone(groups);
@@ -60,7 +60,7 @@ test("existing groups, stable IDs, custom keys, cached folders and clip referenc
   const actor = new Actor("Actor.a", initial);
   assert.equal(await ensureActorDefaults(actor), true);
   const library = getLibrary(actor);
-  assert.equal(library.groups.length, 8);
+  assert.equal(library.groups.length, 10);
   assert.deepEqual(library.groups[0], {...attack, category: "voice.attack"});
   assert.deepEqual(library.groups.slice(1, 4), [{...movement, category: "voice.move"}, retreat, custom]);
   assert.deepEqual(library.metadata, {keep: true});
@@ -91,7 +91,7 @@ test("concurrent initialization shares one write and preserves queued manual arc
   assert.equal(first, second);
   await Promise.all([first, second, addFile(actor, "custom", {path: "voice/custom.ogg"})]);
   assert.equal(actor.writes, 2);
-  assert.equal(getLibrary(actor).groups.length, 8);
+  assert.equal(getLibrary(actor).groups.length, 10);
   assert.equal(getLibrary(actor).groups[0].entries[0].path, "voice/custom.ogg");
 });
 
@@ -111,8 +111,8 @@ test("duplicates keep their archives and fill missing defaults; a future schema 
   library.groups.shift();
   const duplicate = new Actor("Actor.duplicate", library);
   seedNewActor(duplicate);
-  assert.deepEqual(duplicate.getFlag(namespace, "library").groups.slice(0, 6), library.groups);
-  assert.equal(duplicate.getFlag(namespace, "library").groups[6].name, "attack");
+  assert.deepEqual(duplicate.getFlag(namespace, "library").groups.slice(0, 8), library.groups);
+  assert.equal(duplicate.getFlag(namespace, "library").groups[8].name, "attack");
   const future = new Actor("Actor.future", {schemaVersion: 2, groups: []});
   assert.throws(() => seedNewActor(future), /UnsupportedSchema/);
   assert.equal(future.sourceUpdates, 0);
@@ -121,7 +121,7 @@ test("duplicates keep their archives and fill missing defaults; a future schema 
 test("a matching name never duplicates or replaces an existing custom category", () => {
   const library = {schemaVersion: 1, groups: [{id: "renamed", name: "movement", category: "voice.attack", entries: []}]};
   assert.equal(addActorDefaults(library), true);
-  assert.equal(library.groups.length, 7);
+  assert.equal(library.groups.length, 9);
   assert.equal(library.groups.filter(group => group.category === "voice.move").length, 1);
   assert.equal(addActorDefaults(library), false);
 });
@@ -158,7 +158,7 @@ test("1.0.2 movement migrates in place to move with all folder data and entry ID
   const migrated = getLibrary(actor);
   assert.deepEqual(migrated.groups[0], {...old, name: "move", category: "voice.move"});
   assert.deepEqual(migrated.metadata, {keep: true});
-  assert.equal(migrated.groups.length, 7);
+  assert.equal(migrated.groups.length, 9);
   assert.deepEqual(migrated.groups.find(group => group.category === "voice.run").entries, []);
   assert(!migrated.groups.some(group => group.category === "voice.movement"));
   assert.deepEqual(listClips(actor, {category: "voice.move"}).map(clip => clip.path), ["voice/walk.ogg", "voice/march/a.mp3"]);
@@ -183,7 +183,7 @@ test("an existing move pool absorbs legacy pools without losing conflicting entr
   assert.deepEqual(move.entries.find(entry => entry.id === "folder").excluded, ["hidden.ogg"]);
   assert.deepEqual(listClips(actor, {category: "voice.move"}).map(clip => clip.path).sort(),
     ["voice/walk.ogg", "voice/other.ogg", "voice/folder/a.wav", "voice/extra.mp3"].sort());
-  assert.equal(library.groups.length, 7); assert(!library.groups.some(group => group.category === "voice.movement"));
+  assert.equal(library.groups.length, 9); assert(!library.groups.some(group => group.category === "voice.movement"));
   assert.equal(await ensureActorDefaults(actor), false);
 });
 
@@ -222,7 +222,7 @@ test("GM startup migrates world and unlinked token movement pools once", async (
   game.actors = [world]; game.scenes = [{tokens: [{actorLink: false, actor: token}]}];
   assert.deepEqual(await initializeActorDefaults(), {updated: 2, failed: 0});
   for (const actor of [world, token]) {
-    assert.equal(getLibrary(actor).groups.length, 7);
+    assert.equal(getLibrary(actor).groups.length, 9);
     assert.equal(getRandomClip(actor, {category: "voice.move"}).path, "march.ogg");
     assert.equal(getRandomClip(actor, {category: "voice.run"}), null);
   }
@@ -238,7 +238,7 @@ test("a failed movement migration leaves the complete original archive available
   assert.deepEqual(getLibrary(actor), before);
   actor.failWrite = false; await ensureActorDefaults(actor);
   assert.equal(getRandomClip(actor, {category: "voice.move"}).path, "walk.ogg");
-  assert.equal(getLibrary(actor).groups.length, 7);
+  assert.equal(getLibrary(actor).groups.length, 9);
 });
 
 test("permission and schema guards prevent any legacy archive from being renamed without authorization", async () => {
@@ -258,7 +258,7 @@ test("legacy Actor imports and duplicates migrate synchronously while keeping th
     {id: "clip", type: "file", name: "Walk", path: "walk.ogg"}]}]};
   const imported = new Actor("Actor.imported-old", legacy); seedNewActor(imported);
   const library = getLibrary(imported);
-  assert.equal(library.groups.length, 7); assert.equal(library.groups[0].id, "old");
+  assert.equal(library.groups.length, 9); assert.equal(library.groups[0].id, "old");
   assert.equal(library.groups[0].category, "voice.move"); assert.deepEqual(library.groups[0].entries, legacy.groups[0].entries);
   const duplicate = new Actor("Actor.copy-new", library); seedNewActor(duplicate);
   assert.deepEqual(getLibrary(duplicate), library); assert.equal(duplicate.sourceUpdates, 0);
