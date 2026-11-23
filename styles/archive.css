@@ -65,7 +65,8 @@
 
 .dsa-automatic .dsa-library > p { color:var(--dsa-muted); line-height:1.45; margin:12px 0; }
 .dsa-automatic .dsa-auto-set { border:1px solid var(--dsa-line); border-radius:6px; margin:0 0 12px; padding:12px; min-width:0; background:var(--dsa-panel); }
-.dsa-automatic .dsa-auto-name, .dsa-automatic .dsa-auto-pool { display:flex; align-items:flex-end; gap:8px; }
-.dsa-automatic .dsa-auto-pool { margin-top:10px; }
+.dsa-automatic .dsa-auto-name { display:flex; align-items:flex-end; gap:8px; margin-bottom:12px; }
+.dsa-automatic .dsa-group:last-child { margin-bottom:0; }
+.dsa-automatic .dsa-play:not(.playing) .fa-stop, .dsa-automatic .dsa-play.playing .fa-play { display:none; }
 .dsa-automatic .dsa-auto-set label { flex:1; min-width:0; color:var(--dsa-muted); }
-.dsa-automatic .dsa-auto-set input, .dsa-automatic .dsa-auto-set textarea { display:block; width:100%; margin-top:4px; background:#11171c; color:var(--dsa-text); border:1px solid var(--dsa-line); }
+.dsa-automatic .dsa-auto-set input { display:block; width:100%; margin-top:4px; background:#11171c; color:var(--dsa-text); border:1px solid var(--dsa-line); }
