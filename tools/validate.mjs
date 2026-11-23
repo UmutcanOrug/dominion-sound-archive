@@ -13,7 +13,7 @@ assert.equal(manifest.compatibility.minimum, "13");
 assert.equal(manifest.compatibility.maximum, "13");
 assert.equal(manifest.download, `https://github.com/UmutcanOrug/${manifest.id}/releases/download/v${manifest.version}/${manifest.id}.zip`);
 assert.equal(manifest.manifest, `https://github.com/UmutcanOrug/${manifest.id}/releases/latest/download/module.json`);
-for (const file of [...manifest.esmodules, ...manifest.styles, ...manifest.languages.map(l => l.path), manifest.license, "templates/archive.hbs", "templates/prototype.hbs", "README.md"]) {
+for (const file of [...manifest.esmodules, ...manifest.styles, ...manifest.languages.map(l => l.path), manifest.license, "templates/archive.hbs", "templates/prototype.hbs", "templates/automatic-sounds.hbs", "README.md"]) {
   assert((await stat(path.join(root, file))).isFile(), file);
 }
 for (const file of await readdir(path.join(root, "scripts"))) {
