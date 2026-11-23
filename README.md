@@ -22,17 +22,19 @@ For local Foundry installation, extract the ZIP into `Data/modules/dominion-soun
 
 ## Automatic Sound Matching
 
-As GM in a SWADE world, open **Configure Settings → Dominion Sound Archive → Automatic Sound Matching**. Add a sound set and enter the character's Actor name. In **Attack**, **Hurt** or **Death**, use **Add Audio File** or **Add Folder** to select an asset already in Forge. Use **Play** next to an individual clip to preview it. Use the refresh button on a linked folder to discover new clips, then select **Save** to apply your edits. The name must match the whole Actor name. Matching ignores case and extra whitespace. The token name is checked when the Actor name has no set. Multiple clips in a pool are picked at random. Leave a pool empty to keep that event silent.
+As GM in a SWADE world, open **Configure Settings → Dominion Sound Archive → Automatic Sound Matching**. Add a sound set and enter a name or part of a name. A rule named `Auranii` matches both `Auranii Legionarii` and `Auranii Rifleman`. Matching ignores case and extra whitespace. For each event, the longest matching rule with clips wins. The token name is checked if no Actor name rule supplies clips.
 
-- **Attack** plays when a public SWADE weapon attack roll completes. A weapon damage roll and a Benny reroll are separate and do not play this cue.
+In **Attack**, **Hurt** or **Death**, use **Add Audio File** or **Add Folder** to select an asset in Forge. Each clip has a **Play** button. Refresh a linked folder to discover new clips, then select **Save**. An Actor's own **attack**, **hurt** and **death** groups take priority when they have clips for the event. Existing **wounded** clips also work as a personal Hurt fallback. Multiple clips in the selected pool are picked at random.
+
+- **Attack** plays after a public weapon attack from native SWADE or SWADE Tools. A weapon damage roll and a Benny reroll are separate and do not play this cue. The SWADE Tools card format was checked against [UmutcanOrug/swade-tools-fix 2.3.0](https://github.com/UmutcanOrug/swade-tools-fix/blob/f2fdcc73a758a27767911ebcbb641d94364c4d7c/scripts/class/CharRoll.js#L867-L956).
 - **Hurt** plays on an increase in Wounds. Healing and Fatigue are separate.
-- **Death** plays when the token becomes Dead or is marked Defeated in the combat tracker. SWADE's Incapacitated condition alone does not trigger Death. A simultaneous wound and defeat favors Death.
+- **Death** plays when the token becomes Incapacitated or Dead, or is marked Defeated in the combat tracker. A wound and incapacitation in the same update favor Death.
 
 Sounds go to active clients viewing the same scene. Hidden tokens only broadcast to GMs. Each listener needs access to the chosen Foundry or Forge file. The menu's preview is local. Automatic sets are world settings, independent of the sheet's Sound Archive and its macro API. If a macro both makes a native weapon attack and plays its own cue, it can produce both sounds. The menu switch controls all automatic playback.
 
 ## Prototype groups (1.0.4)
 
-As GM, open **Configure Settings → Dominion Sound Archive → Prototype voice** or **Prototype weapon**. These world settings start with the seven voice and nine weapon groups listed below. Use **Add Group** to add as many rows as needed, enter a display name and a unique **voice.*** or **weapon.*** category key, then **Save**. Only group names and keys are shared; sounds and folders stay in each sheet’s own archive. Blank/duplicate names, duplicate keys, wrong prefixes and the reserved legacy **voice.movement** key are rejected before saving.
+As GM, open **Configure Settings → Dominion Sound Archive → Prototype voice** or **Prototype weapon**. These world settings start with the nine voice and nine weapon groups listed below. Use **Add Group** to add as many rows as needed, enter a display name and a unique **voice.*** or **weapon.*** category key, then **Save**. Only group names and keys are shared; sounds and folders stay in each sheet’s own archive. Blank/duplicate names, duplicate keys, wrong prefixes and the reserved legacy **voice.movement** key are rejected before saving.
 
 Save immediately applies missing groups to world Actors, world Items, Actor inventories and unlinked token Actors/inventories on every scene, using the elected active GM. No Forge refresh is normally required. New/imported/duplicated documents and owner-opened archives use the current prototype. A GM reload retries unfinished application. Compendium packs are not mass-scanned or unlocked; their imported documents receive defaults.
 
@@ -42,7 +44,7 @@ Synchronization adds missing groups only. It never deletes, renames or replaces 
 
 ## Use the archive
 
-The initial voice prototype contains these seven groups:
+The initial voice prototype contains these nine groups. Attack, Hurt and Death are also supplied to every Actor when the world uses a customized voice prototype.
 
 | Group | Macro category key |
 | --- | --- |
@@ -53,6 +55,8 @@ The initial voice prototype contains these seven groups:
 | `run` | `voice.run` |
 | `wounded` | `voice.wounded` |
 | `retreat` | `voice.retreat` |
+| `hurt` | `voice.hurt` |
+| `death` | `voice.death` |
 
 After updating, reload the world as a GM. One active GM automatically adds missing groups to every world Actor and existing unlinked scene token Actor. Newly created, imported and duplicated Actors receive them during creation. Existing Item groups are preserved alongside the new defaults below.
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.7
+
+- Recognize public weapon attack cards from the SWADE Tools 2.3.0 fork alongside native SWADE attacks.
+- Match parts of Actor or token names. When several rules supply audio for the same event, the longest matching rule wins.
+- Play Death when Incapacitated is applied, including when the combat tracker leaves Defeated unset.
+- Prefer each Actor's own Attack, Hurt or Death pool when it contains clips. Supply those groups to Actor archives and support legacy Wounded clips as a Hurt fallback.
+
 ## 1.0.6
 
 - Fixed Automatic Sound Matching controls remaining disabled after adding a sound set in Foundry.
