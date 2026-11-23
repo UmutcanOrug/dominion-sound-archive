@@ -1,0 +1,31 @@
+<section class="dsa-shell">
+  <header class="dsa-toolbar">
+    <label><input type="checkbox" data-auto-enabled {{#if enabled}}checked{{/if}} {{#if busy}}disabled{{/if}}> {{localize "DSA.AutoEnabled"}}</label>
+    <button type="button" data-auto-action="add" class="dsa-primary" {{#if busy}}disabled{{/if}}><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "DSA.AutoAddSet"}}</button>
+  </header>
+  <div class="dsa-library">
+    <p>{{localize "DSA.AutoMatchHint"}}</p>
+    {{#each sets}}
+      <fieldset class="dsa-auto-set" data-auto-set="{{@index}}" {{#if ../busy}}disabled{{/if}}>
+        <div class="dsa-auto-name">
+          <label>{{localize "DSA.AutoActorName"}}<input type="text" data-auto-name value="{{name}}" maxlength="200"></label>
+          <button type="button" data-auto-action="remove" aria-label="{{localize 'DSA.AutoRemoveSet'}}" title="{{localize 'DSA.AutoRemoveSet'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+        </div>
+        {{#each pools}}
+          <div class="dsa-auto-pool">
+            <label>{{label}}<textarea data-event="{{event}}" rows="2" placeholder="{{localize 'DSA.AutoPaths'}}">{{paths}}</textarea></label>
+            <div class="dsa-controls">
+              <button type="button" data-auto-action="browse" data-event="{{event}}" title="{{localize 'DSA.AddFile'}}" aria-label="{{localize 'DSA.AddFile'}}: {{label}}"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></button>
+              <button type="button" data-auto-action="preview" data-event="{{event}}" title="{{localize 'DSA.Play'}}" aria-label="{{localize 'DSA.Play'}}: {{label}}"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        {{/each}}
+      </fieldset>
+    {{else}}<p class="dsa-empty-small">{{localize "DSA.AutoEmpty"}}</p>{{/each}}
+  </div>
+  <footer class="dsa-footer dsa-prototype-footer">
+    <button type="button" data-auto-action="stop" {{#if busy}}disabled{{/if}}>{{localize "DSA.Stop"}}</button>
+    <button type="button" data-auto-action="cancel" {{#if busy}}disabled{{/if}}>{{localize "DSA.Cancel"}}</button>
+    <button type="button" class="dsa-primary" data-auto-action="save" {{#if busy}}disabled{{/if}}>{{localize "DSA.Save"}}</button>
+  </footer>
+</section>
