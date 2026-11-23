@@ -61,6 +61,16 @@ test("normalizes whole Actor names, prefers them over the token label and choose
   assert.throws(() => validateSoundSets([{...sets[0], hurt: ["javascript:test.ogg"]}]), /InvalidPath/);
 });
 
+test("folder pools keep Forge metadata, respect exclusions and play only unique cached paths", () => {
+  const attack = ["one.ogg", {type: "folder", path: "voices/scout", source: "forgevtt", recursive: true,
+    bucket: "assets", excluded: ["hidden.ogg"], clips: [{path: "one.ogg"}, {path: "two.wav"}, {path: "hidden.ogg"}]}];
+  const sets = validateSoundSets([{name: "Scout", attack, hurt: [], death: []}]);
+  assert.deepEqual(sets[0].attack[1].clips.map(clip => clip.path), ["one.ogg", "two.wav"]);
+  assert.equal(sets[0].attack[1].source, "forgevtt");
+  assert.equal(sets[0].attack[1].bucket, "assets");
+  assert.equal(chooseAutomaticSound(sets, "Scout", "", "attack", () => 0.6), "two.wav");
+});
+
 test("completed native SWADE weapon trait and attribute rolls play once and preserve the return value", async () => {
   const msg = message("m");
   actor.result = {options: {messageId: msg.id}, total: 3};
@@ -212,26 +222,72 @@ test("the GM settings menu saves named pools separately from document archives a
   assert.equal(config.scope, "world");
   assert.equal(menu.restricted, true);
   assert.equal(menu.type, AutomaticSoundSettings);
-  state = config.default;
+  state = {schemaVersion: 1, enabled: true, sets: [{name: "Old Scout", attack: ["forge/a.ogg", "forge/b.ogg"], hurt: ["hurt.wav"], death: []}]};
   const editor = new AutomaticSoundSettings();
-  const paths = {attack: "forge/a.ogg\nforge/b.ogg", hurt: "hurt.wav", death: ""};
+  const name = {value: "Scout", closest: () => ({dataset: {autoSet: 0}})};
   editor.element = {
     querySelector() { return {checked: true}; },
-    querySelectorAll(selector) {
-      if (selector !== "[data-auto-set]") return [];
-      return [{querySelector(field) {
-        if (field === "[data-auto-name]") return {value: "Scout"};
-        return {value: paths[Object.keys(paths).find(event => field.includes(event))]};
-      }}];
-    }
+    querySelectorAll(selector) { return selector === "[data-auto-name]" ? [name] : []; }
   };
-  editor.draft.sets.push({name: "", attack: [], hurt: [], death: []});
   await editor.perform({dataset: {autoAction: "save"}, closest() {}});
   assert.equal(editor.closed, true);
+  assert.equal(state.schemaVersion, 2);
   const reopened = new AutomaticSoundSettings();
-  assert.deepEqual((await reopened._prepareContext()).sets[0].pools.map(pool => pool.paths),
-    ["forge/a.ogg\nforge/b.ogg", "hurt.wav", ""]);
+  assert.deepEqual((await reopened._prepareContext()).sets[0].pools.map(pool => pool.entries.map(entry => entry.path)),
+    [["forge/a.ogg", "forge/b.ogg"], ["hurt.wav"], []]);
   assert.equal(actor.getFlag, undefined);
   game.user.isGM = false;
   await assert.rejects(reopened._prepareContext(), /AutoGMOnly/);
+});
+
+test("adding a name, file and folder reenables new controls, and a failed refresh keeps the cached clips", async () => {
+  const {AutomaticSoundSettings} = await import("../scripts/automatic-sound-settings.js");
+  globalThis.ForgeVTT = {usingTheForge: true};
+  const files = ["https://assets.forge-vtt.com/u/one.ogg", "https://assets.forge-vtt.com/u/two.ogg"];
+  const browseCalls = [];
+  foundry.applications = {apps: {FilePicker: {implementation: {async browse(source, path, options) {
+    browseCalls.push({source, path, options});
+    return {files};
+  }}}}};
+  globalThis.ui = {notifications: {info() {}}};
+  state = {schemaVersion: 2, enabled: true, sets: []};
+  const editor = new AutomaticSoundSettings();
+  let controls = [{}];
+  let names = [];
+  const renderElement = () => ({
+    querySelector(selector) { return selector === "[data-auto-enabled]" ? {checked: true} : {focus() {}}; },
+    querySelectorAll(selector) {
+      if (selector === "[data-auto-name]") return names;
+      if (selector === ".dsa-shell input, .dsa-shell button") return controls;
+      return [];
+    }
+  });
+  editor.element = renderElement();
+  editor.render = async () => {
+    controls = [{}, {}];
+    editor.element = renderElement();
+    editor.applyBusy();
+    assert(controls.every(control => control.disabled));
+  };
+  await editor.perform({dataset: {autoAction: "add"}, closest() {}});
+  assert(controls.every(control => !control.disabled));
+  const set = editor.draft.sets[0];
+  names = [{value: "Forge Scout", closest: () => ({dataset: {autoSet: 0}})}];
+  await editor.addSelection(set, "attack", "audio", {path: files[0]});
+  editor.folderOptions = async () => ({name: "Defeat pack", recursive: true});
+  await editor.addSelection(set, "death", "folder", {source: "forgevtt", target: "voices/defeat"});
+  assert.equal(set.name, "Forge Scout");
+  assert.deepEqual(set.attack, [files[0]]);
+  assert.deepEqual(set.death[0].clips.map(clip => clip.path), files);
+  assert.deepEqual(browseCalls[0], {source: "forgevtt", path: "voices/defeat", options: {recursive: true}});
+  const folderButton = (action, path) => ({dataset: {autoAction: action, path}, closest(selector) {
+    return {dataset: {"[data-auto-set]": {autoSet: 0}, "[data-event]": {event: "death"}, "[data-auto-entry]": {autoEntry: 0}}[selector]};
+  }});
+  await editor.perform(folderButton("remove-clip", files[0]));
+  await editor.perform(folderButton("refresh-folder"));
+  assert.deepEqual(set.death[0].clips.map(clip => clip.path), [files[1]]);
+  foundry.applications.apps.FilePicker.implementation.browse = async () => { throw new Error("Offline"); };
+  await assert.rejects(editor.perform(folderButton("refresh-folder")), /FolderUnavailable.*Offline/);
+  assert.deepEqual(set.death[0].clips.map(clip => clip.path), [files[1]]);
+  assert(controls.every(control => !control.disabled));
 });
