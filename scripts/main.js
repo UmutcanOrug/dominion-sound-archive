@@ -2,12 +2,15 @@ import { MODULE_ID, report } from "./utils.js";
 import { createAPI } from "./api.js";
 import { openArchive, updateArchives } from "./archive-app.js";
 import { registerPrototypeSettings } from "./prototype-settings.js";
+import { registerAutomaticSoundSettings } from "./automatic-sound-settings.js";
+import { registerAutomaticSoundHooks } from "./automatic-sounds.js";
 import { registerSheetIntegration } from "./sheet-integration.js";
 import { registerActorDefaults, initializeActorDefaults } from "./actor-defaults.js";
 import { registerItemDefaults, initializeItemDefaults } from "./item-defaults.js";
 
 Hooks.once("init", () => {
   registerPrototypeSettings();
+  registerAutomaticSoundSettings();
   registerSheetIntegration(openArchive);
   registerActorDefaults();
   registerItemDefaults();
@@ -20,6 +23,7 @@ Hooks.once("init", () => {
 Hooks.once("ready", async () => {
   try {
     game.modules.get(MODULE_ID).api = createAPI();
+    registerAutomaticSoundHooks();
     await initializeActorDefaults();
     await initializeItemDefaults();
   }
