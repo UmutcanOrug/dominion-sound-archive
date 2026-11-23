@@ -22,7 +22,7 @@ For local Foundry installation, extract the ZIP into `Data/modules/dominion-soun
 
 ## Automatic Sound Matching
 
-As GM in a SWADE world, open **Configure Settings → Dominion Sound Archive → Automatic Sound Matching**. Add a sound set, enter the character's Actor name, add files under **Attack**, **Hurt** and **Death** using the file picker or one path per line, then select **Save**. The name must match the whole Actor name. Matching ignores case and extra whitespace. The token name is checked when the Actor name has no set. Multiple clips in a pool are picked at random. Leave a pool empty to keep that event silent.
+As GM in a SWADE world, open **Configure Settings → Dominion Sound Archive → Automatic Sound Matching**. Add a sound set and enter the character's Actor name. In **Attack**, **Hurt** or **Death**, use **Add Audio File** or **Add Folder** to select an asset already in Forge. Use **Play** next to an individual clip to preview it. Use the refresh button on a linked folder to discover new clips, then select **Save** to apply your edits. The name must match the whole Actor name. Matching ignores case and extra whitespace. The token name is checked when the Actor name has no set. Multiple clips in a pool are picked at random. Leave a pool empty to keep that event silent.
 
 - **Attack** plays when a public SWADE weapon attack roll completes. A weapon damage roll and a Benny reroll are separate and do not play this cue.
 - **Hurt** plays on an increase in Wounds. Healing and Fatigue are separate.

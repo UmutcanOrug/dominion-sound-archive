@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6
+
+- Fixed Automatic Sound Matching controls remaining disabled after adding a sound set in Foundry.
+- Added the Sound Archive file and folder workflow to Attack, Hurt and Death, including individual preview, refresh and clip exclusions.
+- Existing 1.0.5 sound paths load as individual clips.
+
 ## 1.0.5
 
 - Added Automatic Sound Matching for SWADE. GMs assign Attack, Hurt and Death audio pools to character names in Configure Settings.
