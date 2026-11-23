@@ -63,11 +63,21 @@ export function getAutomaticSounds() {
 }
 
 export function chooseAutomaticSound(sets, actorName, tokenName, event, random = Math.random) {
-  const find = name => {
+  const findPool = name => {
     const normalized = normalizeSoundName(name);
-    return normalized && sets.find(set => normalizeSoundName(set.name) === normalized);
+    let bestLength = 0;
+    let bestPaths;
+    for (const set of sets) {
+      const key = normalizeSoundName(set.name);
+      if (key.length <= bestLength || !normalized.includes(key)) continue;
+      const pool = set[event];
+      const paths = pool?.flatMap(entry => typeof entry === "string" ? [entry] : entry.clips.map(clip => clip.path));
+      if (!paths?.length) continue;
+      bestPaths = paths;
+      bestLength = key.length;
+    }
+    return bestPaths;
   };
-  const pool = (find(actorName) || find(tokenName))?.[event];
-  const paths = [...new Set(pool?.flatMap(entry => typeof entry === "string" ? [entry] : entry.clips.map(clip => clip.path)))];
+  const paths = [...new Set(findPool(actorName) ?? findPool(tokenName))];
   return paths.length ? paths[Math.floor(random() * paths.length)] : undefined;
 }

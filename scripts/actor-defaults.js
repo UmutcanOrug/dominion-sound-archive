@@ -2,7 +2,7 @@ import { MODULE_ID, fmt, report, uid, t } from "./utils.js";
 import { createDefaultGroupService } from "./default-groups.js";
 
 export { ACTOR_DEFAULT_GROUPS } from "./prototype-data.js";
-import { getPrototype } from "./prototype-data.js";
+import { AUTOMATIC_VOICE_GROUPS, getPrototype } from "./prototype-data.js";
 
 const normalizedName = name => String(name ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -32,7 +32,9 @@ function migrateMovementGroups(library) {
   return true;
 }
 
-const defaults = createDefaultGroupService("Actor", () => getPrototype("voice").groups, migrateMovementGroups);
+const defaults = createDefaultGroupService("Actor", () => [
+  ...getPrototype("voice").groups, ...AUTOMATIC_VOICE_GROUPS
+], migrateMovementGroups);
 export const addActorDefaults = defaults.add;
 export const seedNewActor = defaults.seed;
 export const ensureActorDefaults = defaults.ensure;

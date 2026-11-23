@@ -1,13 +1,15 @@
-import { MODULE_ID } from "./utils.js";
-import { chooseAutomaticSound, getAutomaticSounds } from "./automatic-sound-data.js";
+import { MODULE_ID, isAudioPath, validatePath } from "./utils.js";
+import { chooseAutomaticSound, getAutomaticSounds, normalizeSoundName } from "./automatic-sound-data.js";
+import { canRead, listClips } from "./library-service.js";
+import { AUTOMATIC_VOICE_CATEGORIES } from "./prototype-data.js";
 
 const snapshotKey = "dsaAutomaticSoundBefore";
 const wrapped = Symbol("dsaAutomaticSoundRoll");
 const localOrigin = userId => userId === game.user.id;
 const wounds = actor => actor?._source?.system?.wounds?.value ?? actor?.system?.wounds?.value;
 const deadStatus = () => CONFIG.specialStatusEffects?.DEFEATED ?? "dead";
-const isDeathEffect = effect => Boolean(effect.active) && ["dead", deadStatus()].some(id =>
-  id !== "incapacitated" && effect.statuses?.has(id));
+const hasDeathStatus = statuses => ["incapacitated", "dead", deadStatus()].some(id => statuses?.has(id));
+const isDeathEffect = effect => Boolean(effect.active) && hasDeathStatus(effect.statuses);
 
 function changedValue(change, path) {
   return change[path] ?? path.split(".").reduce((value, key) => value?.[key], change);
@@ -30,10 +32,27 @@ function currentToken(actor, speaker) {
     ?? active.find(token => !token.hidden) ?? active[0];
 }
 
+function personalSound(actor, event) {
+  if (!canRead(actor)) return;
+  try {
+    const clips = listClips(actor).filter(clip => isAudioPath(clip.path));
+    const byName = clip => normalizeSoundName(clip.groupName);
+    let pool = clips.filter(clip => clip.category === AUTOMATIC_VOICE_CATEGORIES[event]);
+    if (!pool.length) pool = clips.filter(clip => byName(clip) === event);
+    if (!pool.length && event === "hurt") {
+      pool = clips.filter(clip => clip.category === "voice.wounded" || byName(clip) === "wounded");
+    }
+    if (pool.length) {
+      const paths = [...new Set(pool.map(clip => clip.path))];
+      return validatePath(paths[Math.floor(Math.random() * paths.length)], true);
+    }
+  } catch (error) { logPlaybackError(error); }
+}
+
 function playSound(actor, token, event) {
   const {enabled, sets} = getAutomaticSounds();
   if (!enabled) return;
-  const src = chooseAutomaticSound(sets, actor.name, token.name, event);
+  const src = personalSound(actor, event) ?? chooseAutomaticSound(sets, actor.name, token.name, event);
   if (!src) return;
   const recipients = game.users.filter(user => user.active && user.id !== game.user.id
     && user.viewedScene === token.parent.id && (!token.hidden || user.isGM)).map(user => user.id);
@@ -52,8 +71,7 @@ function safePlay(actor, token, event) {
 }
 
 function isDefeated(token) {
-  return token.actor?.statuses?.has("dead")
-    || (deadStatus() !== "incapacitated" && token.actor?.statuses?.has(deadStatus()))
+  return hasDeathStatus(token.actor?.statuses)
     || (game.combats ?? []).some(combat => combat.scene?.id === token.parent.id &&
       combat.combatants.some(combatant => combatant.tokenId === token.id && combatant.defeated));
 }
@@ -66,15 +84,35 @@ function isNativeAttackMessage(message) {
   return message?.rolls?.some(roll => roll.options?.rollType === "attack" && !roll.options.rerollMode);
 }
 
+function toolsAttackToken(message) {
+  // SWADE Tools 2.3.0 attaches these flags to the original ItemRoll chat
+  // message. Its rerolls copy flags after create; damage uses a separate type.
+  const flags = message.flags?.["swade-tools"];
+  if (!flags?.itemroll || !["skill", "attribute"].includes(flags.rolltype)
+    || !message.rolls?.some(roll => !roll.options?.rerollMode)) return;
+  const scene = canvas.scene;
+  if (!scene || (message.speaker?.scene && message.speaker.scene !== scene.id)) return;
+  const speaker = message.speakerActor;
+  const token = flags.usetoken && scene.tokens.get(flags.usetoken);
+  if (flags.usetoken && !token) return;
+  const actor = token?.actor ?? speaker ?? game.actors?.get(flags.useactor);
+  if (!actor || (flags.useactor && actor.id !== flags.useactor)) return;
+  const owner = flags.usevehicletoken ? scene.tokens.get(flags.usevehicletoken)?.actor
+    : flags.usevehicle ? game.actors?.get(flags.usevehicle) : actor;
+  const item = owner?.items?.get(flags.itemroll);
+  if (item?.type !== "weapon") return;
+  return token ?? currentToken(actor, message.speaker);
+}
+
 export function registerAutomaticSoundHooks() {
   if (game.system.id !== "swade") return;
   const hurtTimers = new Map();
   const recentDeaths = new Map();
   const playedAttacks = new WeakSet();
 
-  function attack(message, actor) {
+  function attack(message, actor, resolvedToken) {
     if (!message || message.blind || message.whisper?.length || message.isContentVisible === false || playedAttacks.has(message)) return;
-    const token = currentToken(actor ?? message.speakerActor, message.speaker);
+    const token = resolvedToken ?? currentToken(actor ?? message.speakerActor, message.speaker);
     if (!token) return;
     playedAttacks.add(message);
     safePlay(token.actor, token, "attack");
@@ -104,7 +142,10 @@ export function registerAutomaticSoundHooks() {
   }
 
   Hooks.on("createChatMessage", (message, _options, userId) => {
-    if (localOrigin(userId) && isNativeAttackMessage(message)) attack(message);
+    if (!localOrigin(userId)) return;
+    if (isNativeAttackMessage(message)) return attack(message);
+    const token = toolsAttackToken(message);
+    if (token) attack(message, token.actor, token);
   });
 
   function death(token) {

@@ -1,13 +1,18 @@
 import { MODULE_ID, clone, t } from "./utils.js";
 
+export const AUTOMATIC_VOICE_CATEGORIES = Object.freeze({attack: "voice.attack", hurt: "voice.hurt", death: "voice.death"});
+export const AUTOMATIC_VOICE_GROUPS = Object.freeze(Object.entries(AUTOMATIC_VOICE_CATEGORIES)
+  .map(([name, category]) => Object.freeze({name, category})));
+
 export const ACTOR_DEFAULT_GROUPS = Object.freeze([
-  {name: "attack", category: "voice.attack"},
+  AUTOMATIC_VOICE_GROUPS[0],
   {name: "take cover", category: "voice.take-cover"},
   {name: "enter building", category: "voice.enter-building"},
   {name: "move", category: "voice.move"},
   {name: "run", category: "voice.run"},
   {name: "wounded", category: "voice.wounded"},
-  {name: "retreat", category: "voice.retreat"}
+  {name: "retreat", category: "voice.retreat"},
+  ...AUTOMATIC_VOICE_GROUPS.slice(1)
 ].map(Object.freeze));
 
 export const ITEM_DEFAULT_GROUPS = Object.freeze([
