@@ -76,6 +76,24 @@
     "PrototypeVoiceKeyInvalid": "Voice keys must start with voice. and contain only letters, digits, dots, underscores or hyphens (maximum 100 characters).",
     "PrototypeWeaponKeyInvalid": "Weapon keys must start with weapon. and contain only letters, digits, dots, underscores or hyphens (maximum 100 characters).",
     "PrototypeLegacyKey": "voice.movement is reserved for older macros. Use voice.move or a different voice key.",
-    "PrototypeDuplicateName": "Prototype group names must be unique (ignoring case and extra spaces)."
+    "PrototypeDuplicateName": "Prototype group names must be unique (ignoring case and extra spaces).",
+    "AutoMenu": "Automatic Sound Matching",
+    "AutoMenuHint": "Assign automatic attack, hurt and death sounds by character name in SWADE.",
+    "AutoEnabled": "Enable automatic sounds in SWADE",
+    "AutoAddSet": "Add sound set",
+    "AutoMatchHint": "Enter the character’s Actor name. The token name is used if no Actor name matches. One clip is selected from the pool for each event.",
+    "AutoActorName": "Character name",
+    "AutoRemoveSet": "Remove sound set",
+    "AutoAttack": "Attack",
+    "AutoHurt": "Hurt",
+    "AutoDeath": "Death",
+    "AutoPaths": "One audio path or URL per line",
+    "AutoEmpty": "Add a sound set to get started.",
+    "AutoGMOnly": "Only a GM can configure automatic sounds.",
+    "AutoConflict": "These settings changed in another window. Reopen this menu to see the latest settings.",
+    "AutoSaved": "Automatic sound settings saved.",
+    "AutoInvalidSets": "The automatic sound settings have an unsupported format.",
+    "AutoNameRequired": "Enter a character name of up to 200 characters for every sound set.",
+    "AutoDuplicateName": "This character name is already used by another sound set."
   }
 }

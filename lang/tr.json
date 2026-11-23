@@ -76,6 +76,24 @@
     "PrototypeVoiceKeyInvalid": "Ses anahtarı voice. ile başlamalı; yalnızca harf, rakam, nokta, alt çizgi veya kısa çizgi içermeli (en fazla 100 karakter).",
     "PrototypeWeaponKeyInvalid": "Silah anahtarı weapon. ile başlamalı; yalnızca harf, rakam, nokta, alt çizgi veya kısa çizgi içermeli (en fazla 100 karakter).",
     "PrototypeLegacyKey": "voice.movement eski makrolar için ayrılmıştır. voice.move veya başka bir voice anahtarı kullan.",
-    "PrototypeDuplicateName": "Prototip grup adları benzersiz olmalı (büyük/küçük harf ve fazla boşluklar dikkate alınmaz)."
+    "PrototypeDuplicateName": "Prototip grup adları benzersiz olmalı (büyük/küçük harf ve fazla boşluklar dikkate alınmaz).",
+    "AutoMenu": "Automatic Sound Matching",
+    "AutoMenuHint": "SWADE karakterleri için isme göre saldırı, yaralanma ve ölüm seslerini ayarla.",
+    "AutoEnabled": "SWADE otomatik seslerini etkinleştir",
+    "AutoAddSet": "Ses seti ekle",
+    "AutoMatchHint": "Karakterin Actor adını yaz. Actor adı eşleşmezse token adı kullanılır. Her olay için havuzdan bir ses çalınır.",
+    "AutoActorName": "Karakter adı",
+    "AutoRemoveSet": "Ses setini kaldır",
+    "AutoAttack": "Attack · Saldırı",
+    "AutoHurt": "Hurt · Yaralanma",
+    "AutoDeath": "Death · Ölüm",
+    "AutoPaths": "Her satıra bir ses yolu veya URL",
+    "AutoEmpty": "Başlamak için bir ses seti ekle.",
+    "AutoGMOnly": "Otomatik sesleri yalnızca GM ayarlayabilir.",
+    "AutoConflict": "Bu ayar başka bir pencerede değişti. Güncel ayarları görmek için menüyü yeniden aç.",
+    "AutoSaved": "Otomatik ses ayarları kaydedildi.",
+    "AutoInvalidSets": "Otomatik ses ayarlarının biçimi desteklenmiyor.",
+    "AutoNameRequired": "Her ses seti için en fazla 200 karakterlik bir karakter adı gir.",
+    "AutoDuplicateName": "Bu karakter adı başka bir ses setinde kullanılıyor."
   }
 }
